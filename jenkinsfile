@@ -46,7 +46,7 @@ spec:
   volumes:
     - name: reg-ci-secret
       secret:
-        secretName: CHANGE_ME
+        secretName: reg-ci
         defaultMode: 256
         items:
           - key: .dockerconfigjson

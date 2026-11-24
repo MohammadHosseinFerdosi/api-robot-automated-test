@@ -25,7 +25,7 @@ def connect_iran_wallet_transfer_mongo(
     host: str,
     port: str | int,
     user: str,
-    password: CHANGE_ME
+    password: str,
     db_name: str,
 ) -> None:
     global _client, _db_name

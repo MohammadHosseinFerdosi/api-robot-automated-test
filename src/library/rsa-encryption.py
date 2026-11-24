@@ -9,6 +9,6 @@ def encrypt_message(public_key_path, message):
 
 def decrypt_message(private_key_path, encrypted_message):
     with open(private_key_path, 'rb') as f:
-        private_key = CHANGE_ME
+        private_key = rsa.PrivateKey.load_pkcs1(f.read())
     decrypted_message = rsa.decrypt(encrypted_message, private_key)
     return decrypted_message.decode()

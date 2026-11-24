@@ -31,7 +31,7 @@ def connect_to_db(host, port, user, password, db_name):
     global _client, _db
 
     user = quote_plus(user)
-    password = CHANGE_ME
+    password = quote_plus(password)
     uri = (
         f"mongodb://{user}:{password}@{host}:{port}/{db_name}"
         f"?authSource={db_name}"
