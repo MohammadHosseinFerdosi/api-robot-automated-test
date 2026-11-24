@@ -1,0 +1,12 @@
+{
+    "version": "1.0",
+    "message": "GET Request sauccessful.",
+    "result": {
+      "facility": {
+        "facilityId": "0142.075.00035221.11",
+        "totalAmount": 65000000,
+        "settleAmount": 20000000,
+        "discountAmount": 500000
+      }
+    }
+  }

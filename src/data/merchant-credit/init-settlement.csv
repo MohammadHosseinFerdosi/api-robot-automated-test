@@ -1,0 +1,4 @@
+*** Test Cases ***;${amount}
+Invoce Amount 10000000; 10000000
+Invoce Amount 9999999; 9999999
+Invoce Amount 10000001; 10000001

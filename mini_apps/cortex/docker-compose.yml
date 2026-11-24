@@ -1,0 +1,9 @@
+services:
+  cortex-app:
+    build:
+      context: ../..
+      dockerfile: mini_apps/cortex/Dockerfile.cortex-app
+    ports:
+      - "${APP_PORT}:${APP_PORT}"
+    env_file:
+      - .env

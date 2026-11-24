@@ -1,0 +1,959 @@
+<!DOCTYPE html>
+<html lang="en" data-hub-theme="neon" data-theme-cookie="qaCortexTheme">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OTP Catcher</title>
+
+  <link rel="icon" href="{{ url_for('static', filename='/images/dp-logo.jpg') }}" type="image/jpeg">
+
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --page-bg: #050712;
+      --bg-gradient: radial-gradient(circle at top left, #0b5cff 0, #151928 40%, #060712 100%);
+      --card-bg: rgba(15, 18, 34, 0.96);
+      --accent: #0b5cff;
+      --accent-soft: rgba(11, 92, 255, 0.25);
+      --text-main: #f9fbff;
+      --text-muted: #a5afc7;
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --blur: 20px;
+    }
+
+    html[data-hub-theme="neon"] {
+      --page-bg: #050712;
+      --bg-gradient: radial-gradient(circle at top left, #0b5cff 0, #151928 40%, #060712 100%);
+      --card-bg: rgba(15, 18, 34, 0.96);
+      --accent: #0b5cff;
+      --accent-soft: rgba(11, 92, 255, 0.25);
+      --text-main: #f9fbff;
+      --text-muted: #a5afc7;
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --blur: 20px;
+    }
+
+    html[data-hub-theme="legacy"] {
+      --page-bg: #f2f5f8;
+      --bg-gradient: none;
+      --card-bg: #ffffff;
+      --accent: #007bff;
+      --accent-soft: rgba(0, 123, 255, 0.08);
+      --text-main: #333333;
+      --text-muted: #666666;
+      --border-subtle: rgba(0, 0, 0, 0.08);
+      --blur: 0px;
+    }
+
+    html[data-hub-theme="dark"] {
+      --page-bg: #222222;
+      --bg-gradient: none;
+      --card-bg: #333333;
+      --accent: #ff9800;
+      --accent-soft: rgba(255, 152, 0, 0.2);
+      --text-main: #ffffff;
+      --text-muted: #bbbbbb;
+      --border-subtle: #555555;
+      --blur: 0px;
+    }
+
+    html[data-hub-theme="ocean"] {
+      --page-bg: #021b2d;
+      --bg-gradient: radial-gradient(circle at top left, #00bcd4 0, #02253f 50%, #010c16 100%);
+      --card-bg: rgba(3, 25, 44, 0.96);
+      --accent: #00bcd4;
+      --accent-soft: rgba(0, 188, 212, 0.22);
+      --text-main: #e8f9ff;
+      --text-muted: #9fc8d6;
+      --border-subtle: rgba(0, 188, 212, 0.25);
+      --blur: 18px;
+    }
+
+    html[data-hub-theme="forest"] {
+      --page-bg: #03160b;
+      --bg-gradient: radial-gradient(circle at top left, #2ecc71 0, #054020 45%, #020b05 100%);
+      --card-bg: rgba(5, 32, 17, 0.96);
+      --accent: #2ecc71;
+      --accent-soft: rgba(46, 204, 113, 0.25);
+      --text-main: #e4ffe9;
+      --text-muted: #a9d7b8;
+      --border-subtle: rgba(46, 204, 113, 0.25);
+      --blur: 18px;
+    }
+
+    html[data-hub-theme="sunset"] {
+      --page-bg: #1b0615;
+      --bg-gradient: radial-gradient(circle at top left, #ff9a62 0, #642b73 45%, #1b0615 100%);
+      --card-bg: rgba(36, 11, 34, 0.96);
+      --accent: #ff6f61;
+      --accent-soft: rgba(255, 111, 97, 0.3);
+      --text-main: #ffeef8;
+      --text-muted: #f6b4c6;
+      --border-subtle: rgba(255, 111, 97, 0.25);
+      --blur: 20px;
+    }
+
+    html[data-hub-theme="terminal"] {
+      --page-bg: #000000;
+      --bg-gradient: none;
+      --card-bg: #050505;
+      --accent: #00ff5f;
+      --accent-soft: rgba(0, 255, 95, 0.18);
+      --text-main: #e6ffe6;
+      --text-muted: #66cc88;
+      --border-subtle: rgba(0, 255, 95, 0.3);
+      --blur: 0px;
+    }
+
+    html[data-hub-theme="pastel"] {
+      --page-bg: #fdf5ff;
+      --bg-gradient: radial-gradient(circle at top left, #ffd6e8 0, #e3f2fd 40%, #f3e5f5 100%);
+      --card-bg: rgba(255, 255, 255, 0.96);
+      --accent: #ff8a80;
+      --accent-soft: rgba(255, 138, 128, 0.25);
+      --text-main: #333333;
+      --text-muted: #777777;
+      --border-subtle: rgba(0, 0, 0, 0.06);
+      --blur: 18px;
+    }
+
+    html[data-hub-theme="grayscale"] {
+      --page-bg: #1f1f1f;
+      --bg-gradient: none;
+      --card-bg: #2a2a2a;
+      --accent: #b0b0b0;
+      --accent-soft: rgba(255, 255, 255, 0.08);
+      --text-main: #f1f1f1;
+      --text-muted: #aaaaaa;
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --blur: 0px;
+    }
+
+    html[data-hub-theme="midnight"] {
+      --page-bg: #050816;
+      --bg-gradient: radial-gradient(circle at top left, #3b82f6 0, #020617 55%, #000000 100%);
+      --card-bg: rgba(10, 15, 35, 0.96);
+      --accent: #6366f1;
+      --accent-soft: rgba(99, 102, 241, 0.28);
+      --text-main: #e5e7ff;
+      --text-muted: #9ca3d8;
+      --border-subtle: rgba(99, 102, 241, 0.3);
+      --blur: 20px;
+    }
+
+    html[data-hub-theme="cyberpunk"] {
+      --page-bg: #050010;
+      --bg-gradient: radial-gradient(circle at top left, #ff00c3 0, #1e0036 40%, #001b2e 100%);
+      --card-bg: rgba(10, 0, 32, 0.96);
+      --accent: #ff00c3;
+      --accent-soft: rgba(255, 0, 195, 0.3);
+      --text-main: #fdf2ff;
+      --text-muted: #f973c9;
+      --border-subtle: rgba(56, 189, 248, 0.6);
+      --blur: 22px;
+    }
+
+    html[data-hub-theme="aurora"] {
+      --page-bg: #020617;
+      --bg-gradient: radial-gradient(circle at top left, #22c55e 0, #6366f1 40%, #0f172a 100%);
+      --card-bg: rgba(15, 23, 42, 0.96);
+      --accent: #22c55e;
+      --accent-soft: rgba(34, 197, 94, 0.3);
+      --text-main: #e5fdf5;
+      --text-muted: #a5b4fc;
+      --border-subtle: rgba(129, 230, 217, 0.4);
+      --blur: 20px;
+    }
+
+    html[data-hub-theme="desert"] {
+      --page-bg: #2b170a;
+      --bg-gradient: radial-gradient(circle at top left, #f6d365 0, #fda085 45%, #3f1b0b 100%);
+      --card-bg: rgba(52, 29, 16, 0.96);
+      --accent: #ffb74d;
+      --accent-soft: rgba(255, 183, 77, 0.28);
+      --text-main: #fff7e9;
+      --text-muted: #ffcc80;
+      --border-subtle: rgba(255, 183, 77, 0.4);
+      --blur: 18px;
+    }
+
+    html[data-hub-theme="candy"] {
+      --page-bg: #ffe6f3;
+      --bg-gradient: radial-gradient(circle at top left, #ff9a9e 0, #fecfef 40%, #f6f3ff 100%);
+      --card-bg: rgba(255, 255, 255, 0.96);
+      --accent: #ff6fb5;
+      --accent-soft: rgba(255, 111, 181, 0.3);
+      --text-main: #3c1142;
+      --text-muted: #a44f7d;
+      --border-subtle: rgba(255, 111, 181, 0.2);
+      --blur: 16px;
+    }
+
+    html[data-hub-theme="ice"] {
+      --page-bg: #e0f2ff;
+      --bg-gradient: radial-gradient(circle at top left, #bbdefb 0, #e3f2fd 50%, #e0f7fa 100%);
+      --card-bg: rgba(255, 255, 255, 0.98);
+      --accent: #0288d1;
+      --accent-soft: rgba(2, 136, 209, 0.25);
+      --text-main: #10324a;
+      --text-muted: #607d8b;
+      --border-subtle: rgba(2, 136, 209, 0.18);
+      --blur: 12px;
+    }
+
+    html[data-hub-theme="lava"] {
+      --page-bg: #1a0503;
+      --bg-gradient: radial-gradient(circle at top left, #ff512f 0, #dd2476 40%, #1b0000 100%);
+      --card-bg: rgba(32, 6, 6, 0.96);
+      --accent: #ff7043;
+      --accent-soft: rgba(255, 112, 67, 0.3);
+      --text-main: #ffeae3;
+      --text-muted: #ffab91;
+      --border-subtle: rgba(255, 112, 67, 0.35);
+      --blur: 20px;
+    }
+
+    html[data-hub-theme="blueprint"] {
+      --page-bg: #021526;
+      --bg-gradient: radial-gradient(circle at top left, #2563eb 0, #0f172a 45%, #020617 100%);
+      --card-bg: rgba(10, 23, 45, 0.98);
+      --accent: #60a5fa;
+      --accent-soft: rgba(96, 165, 250, 0.3);
+      --text-main: #eff6ff;
+      --text-muted: #93c5fd;
+      --border-subtle: rgba(96, 165, 250, 0.45);
+      --blur: 18px;
+    }
+
+    html[data-hub-theme="solarized"] {
+      --page-bg: #002b36;
+      --bg-gradient: none;
+      --card-bg: #073642;
+      --accent: #b58900;
+      --accent-soft: rgba(181, 137, 0, 0.3);
+      --text-main: #eee8d5;
+      --text-muted: #93a1a1;
+      --border-subtle: rgba(147, 161, 161, 0.6);
+      --blur: 0px;
+    }
+
+    html[data-hub-theme="lavender"] {
+      --page-bg: #f5f3ff;
+      --bg-gradient: radial-gradient(circle at top left, #c4b5fd 0, #f5f3ff 45%, #ede9fe 100%);
+      --card-bg: #fefefe;
+      --accent: #8b5cf6;
+      --accent-soft: rgba(139, 92, 246, 0.25);
+      --text-main: #2e1065;
+      --text-muted: #6d28d9;
+      --border-subtle: rgba(139, 92, 246, 0.2);
+      --blur: 16px;
+    }
+
+    html[data-hub-theme="occasional"] {
+      --page-bg: #050712;
+      --bg-gradient: radial-gradient(circle at top left, #0b5cff 0, #151928 40%, #060712 100%);
+      --card-bg: rgba(15, 18, 34, 0.96);
+      --accent: #0b5cff;
+      --accent-soft: rgba(11, 92, 255, 0.25);
+      --text-main: #f9fbff;
+      --text-muted: #a5afc7;
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --blur: 20px;
+    }
+
+    * { box-sizing: border-box; }
+
+    #occasion-effects-root {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 999;
+    }
+    .occasion-snowflake { position: absolute; top: -5vh; color: #fff; opacity: 0.9; animation-name: qaSnowFall; animation-timing-function: linear; animation-iteration-count: 1; }
+    @keyframes qaSnowFall {
+      0% { transform: translateY(-5vh) translateX(0); opacity: 0.0; }
+      10% { opacity: 0.9; }
+      100% { transform: translateY(110vh) translateX(20px); opacity: 0.2; }
+    }
+    .occasion-leaf { position: absolute; top: -5vh; color: #ffb74d; animation-name: qaLeafFall; animation-timing-function: ease-in-out; animation-iteration-count: 1; }
+    @keyframes qaLeafFall {
+      0% { transform: translateY(-5vh) translateX(0) rotate(0deg); opacity: 0.0; }
+      20% { opacity: 1; }
+      50% { transform: translateY(50vh) translateX(-30px) rotate(45deg); }
+      100% { transform: translateY(110vh) translateX(40px) rotate(90deg); opacity: 0.0; }
+    }
+    .occasion-raindrop { position: absolute; top: -10vh; width: 2px; height: 18px; background: rgba(255,255,255,0.7); border-radius: 999px; animation-name: qaRainFall; animation-timing-function: linear; animation-iteration-count: 1; }
+    @keyframes qaRainFall {
+      0% { transform: translateY(-10vh); opacity: 0.0; }
+      10% { opacity: 0.9; }
+      100% { transform: translateY(110vh); opacity: 0.0; }
+    }
+    .occasion-jumpscare-overlay { position: fixed; inset: 0; background: radial-gradient(circle at center, rgba(255,255,255,0.2), rgba(0,0,0,0.95)); display: flex; align-items: center; justify-content: center; pointer-events: none; animation: qaJumpscareFade 0.9s ease-out forwards; z-index: 1000; }
+    .occasion-jumpscare-face { font-size: 8rem; animation: qaJumpscareZoom 0.7s cubic-bezier(0.19, 1, 0.22, 1) forwards; }
+    @keyframes qaJumpscareZoom {
+      0% { transform: scale(0.2); opacity: 0; }
+      40% { transform: scale(1.6); opacity: 1; }
+      100% { transform: scale(1.0); opacity: 0; }
+    }
+    @keyframes qaJumpscareFade {
+      0% { opacity: 0; }
+      15% { opacity: 1; }
+      100% { opacity: 0; }
+    }
+
+    .theme-selector {
+      position: fixed;
+      top: 16px;
+      right: 20px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      opacity: 0.9;
+      z-index: 2000;
+      user-select: none;
+    }
+    .theme-selector select {
+      font-size: 0.82rem;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.24);
+      background: rgba(0, 0, 0, 0.4);
+      color: var(--text-main);
+      outline: none;
+      cursor: pointer;
+    }
+    html[data-hub-theme="legacy"] .theme-selector select,
+    html[data-hub-theme="pastel"] .theme-selector select,
+    html[data-hub-theme="candy"] .theme-selector select,
+    html[data-hub-theme="ice"] .theme-selector select,
+    html[data-hub-theme="lavender"] .theme-selector select {
+      border-color: rgba(0, 0, 0, 0.16);
+      background: rgba(255, 255, 255, 0.96);
+      color: var(--text-main);
+    }
+
+    body {
+      font-family: 'Roboto', sans-serif;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      background-color: var(--page-bg);
+      background-image: var(--bg-gradient);
+      color: var(--text-main);
+    }
+
+    .container {
+      background: var(--card-bg);
+      color: var(--text-main);
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+      width: 100%;
+      max-width: 420px;
+      text-align: center;
+      transition: all 0.3s ease-in-out;
+      border: 1px solid var(--border-subtle);
+      backdrop-filter: blur(var(--blur));
+    }
+    .container:hover {
+      box-shadow: 0 6px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    .header {
+      background-color: var(--accent);
+      padding: 22px 0;
+      border-radius: 8px 8px 0 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+    .header img {
+      height: 62px;
+      margin-bottom: 12px;
+      border-radius: 14px;
+      background: rgba(255,255,255,0.12);
+      padding: 6px;
+    }
+    .header h1 {
+      font-size: 1.6rem;
+      margin: 0;
+      font-weight: 500;
+      color: #ffffff;
+      letter-spacing: 0.5px;
+    }
+
+    .form-content { padding: 0 20px 10px 20px; }
+
+    .input-container {
+      position: relative;
+      width: 100%;
+      margin-bottom: 20px;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 15px;
+      padding-right: 40px;
+      font-size: 1rem;
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      box-sizing: border-box;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+      background-color: #ffffff;
+      color: #333333;
+    }
+    input[type="text"]:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 8px var(--accent-soft);
+      outline: none;
+    }
+
+    .clear-btn {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      background-color: transparent;
+      border: none;
+      font-size: 1.2rem;
+      cursor: pointer;
+      color: #aaa;
+      display: none;
+    }
+    .clear-btn:hover { color: #555; }
+
+    input[type="submit"],
+    button.copy-btn {
+      width: 100%;
+      padding: 15px;
+      font-size: 1rem;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.1s ease-out;
+    }
+
+    input[type="submit"] {
+      background-color: var(--accent);
+      color: white;
+      font-weight: 500;
+    }
+    input[type="submit"]:hover {
+      filter: brightness(0.9);
+      box-shadow: 0 4px 12px var(--accent-soft);
+      transform: translateY(-1px);
+    }
+    input[type="submit"]:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    button.copy-btn {
+      background-color: #6c757d;
+      color: white;
+      font-weight: 500;
+      margin-top: 10px;
+      display: none;
+    }
+    button.copy-btn:hover {
+      background-color: #5a6268;
+      box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3);
+      transform: translateY(-1px);
+    }
+
+    .result {
+      margin-top: 20px;
+      padding: 20px;
+      background: rgba(0, 0, 0, 0.03);
+      border-radius: 8px;
+      font-size: 1.05rem;
+      color: var(--text-main);
+      box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      display: none;
+    }
+
+    .result div { margin: 7px; }
+    .result strong { display: inline-block; min-width: 120px; }
+
+    #otp-value {
+      font-family: roboto, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      letter-spacing: 1px;
+      cursor: pointer;
+      user-select: all;
+    }
+
+    .status-line {
+      margin-top: 12px;
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      text-align: center;
+    }
+
+    .footer {
+      margin-top: 20px;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+    .footer span { color: var(--accent); font-weight: 500; }
+
+    @media (max-width: 480px) {
+      .header h1 { font-size: 1.4rem; }
+      input[type="text"], input[type="submit"], button.copy-btn {
+        font-size: 0.95rem;
+        padding: 12px;
+      }
+      .form-content { padding: 0 15px 10px 15px; }
+      .theme-selector { top: 14px; right: 14px; }
+    }
+  </style>
+</head>
+
+<body>
+  <div id="occasion-effects-root"></div>
+
+  <div class="theme-selector">
+    <label for="themeSelect">Theme:</label>
+    <select id="themeSelect" name="themeSelect">
+      <option value="neon">Neon Night</option>
+      <option value="legacy">Legacy (Default)</option>
+      <option value="occasional">Occasional</option>
+      <option value="dark">Dark</option>
+      <option value="ocean">Ocean</option>
+      <option value="forest">Forest</option>
+      <option value="sunset">Sunset</option>
+      <option value="terminal">Terminal</option>
+      <option value="pastel">Pastel</option>
+      <option value="grayscale">Grayscale</option>
+      <option value="midnight">Midnight</option>
+      <option value="cyberpunk">Cyberpunk</option>
+      <option value="aurora">Aurora</option>
+      <option value="desert">Desert</option>
+      <option value="candy">Candy</option>
+      <option value="ice">Ice</option>
+      <option value="lava">Lava</option>
+      <option value="blueprint">Blueprint</option>
+      <option value="solarized">Solarized</option>
+      <option value="lavender">Lavender</option>
+    </select>
+  </div>
+
+  <div class="container">
+    <div class="header">
+      <img
+        src="{{ url_for('static', filename='/images/dp-logo.jpg') }}"
+        alt="Platform Logo"
+        onerror="this.src='https://play-lh.googleusercontent.com/ypqJMJzYOKs0pJ0qnNlttrSq_n8gJjkgt-uc3Gfb0Rq1Md1vyR7-2cJPG_OJXWHT0gM';"
+      />
+      <h1>OTP Catcher</h1>
+    </div>
+
+    <div class="form-content">
+      <form id="otpForm">
+        <div class="input-container">
+          <input
+            type="text"
+            id="phoneNumber"
+            placeholder="Enter phone number"
+            oninput="validateInput(event)"
+            required
+            inputmode="tel"
+            autocomplete="on"
+            spellcheck="false"
+          />
+          <button type="button" class="clear-btn" onclick="clearInput()">&times;</button>
+        </div>
+
+        <input id="fetchBtn" type="submit" value="Fetch OTP" />
+      </form>
+
+      <div class="result" id="resultBox">
+        <div>
+          <strong>Received OTP:</strong>
+          <span id="otp-value" onclick="copyOtpOnClick()" title="Click to copy">—</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">
+      Made with <span>&hearts;</span> by the Platform QA crew.
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('keydown', function (e) {
+      if (e.ctrlKey && e.shiftKey && e.altKey && (e.key === 'a' || e.key === 'A')) {
+        e.preventDefault();
+        window.open(
+          'https://example.com/cortex/fa92b7e9c13d4b8d83a77d6e_secret_oasis_gateway_42f89c7a1d9e8f6',
+          '_blank',
+          'noopener'
+        );
+      }
+    });
+
+    (function () {
+      const root = document.documentElement;
+      const effectsRoot = document.getElementById('occasion-effects-root');
+      const selectEl = document.getElementById('themeSelect');
+
+      const THEME_COOKIE_KEY = root.getAttribute('data-theme-cookie') || 'qaCortexTheme';
+      const DEFAULT_THEME = 'legacy';
+
+      const allowedThemes = [
+        'neon','occasional','legacy','dark','ocean','forest','sunset','terminal','pastel','grayscale',
+        'midnight','cyberpunk','aurora','desert','candy','ice','lava','blueprint','solarized','lavender'
+      ];
+
+      const EVENTS = [
+        { id: 'christmas', displayName: 'Christmas', baseTheme: 'ocean', priority: 100, date: year => new Date(year, 11, 25) },
+        { id: 'halloween', displayName: 'Halloween', baseTheme: 'sunset', priority: 90, date: year => new Date(year, 9, 31) },
+        { id: 'norouz', displayName: 'Norouz', baseTheme: 'pastel', priority: 80, date: year => new Date(year, 2, 20) },
+        { id: 'easter', displayName: 'Easter', baseTheme: 'forest', priority: 70, date: year => computeWesternEaster(year) }
+      ];
+
+      function getCookie(name) {
+        const parts = ('; ' + document.cookie).split('; ' + name + '=');
+        if (parts.length === 2) return parts.pop().split(';').shift();
+        return null;
+      }
+
+      function setCookie(name, value, days) {
+        const date = new Date();
+        date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
+        document.cookie =
+          name + '=' + value +
+          '; expires=' + date.toUTCString() +
+          '; path=/; SameSite=Lax';
+      }
+
+      function computeWesternEaster(year) {
+        const a = year % 19;
+        const b = Math.floor(year / 100);
+        const c = year % 100;
+        const d = Math.floor(b / 4);
+        const e = b % 4;
+        const f = Math.floor((b + 8) / 25);
+        const g = Math.floor((b - f + 1) / 3);
+        const h = (19 * a + b - d - g + 15) % 30;
+        const i = Math.floor(c / 4);
+        const k = c % 4;
+        const l = (32 + 2 * e + 2 * i - h - k) % 7;
+        const m = Math.floor((a + 11 * h + 22 * l) / 451);
+        const month = Math.floor((h + l - 7 * m + 114) / 31);
+        const day = ((h + l - 7 * m + 114) % 31) + 1;
+        return new Date(year, month - 1, day);
+      }
+
+      function detectOccasion(date) {
+        const year = date.getFullYear();
+        const t = date.getTime();
+        const holidayCandidates = [];
+
+        for (const ev of EVENTS) {
+          const evDate = ev.date(year);
+          const start = new Date(evDate.getTime());
+          const end = new Date(evDate.getTime());
+          start.setDate(start.getDate() - 7);
+          end.setDate(end.getDate() + 7);
+
+          if (t >= start.getTime() && t <= end.getTime()) {
+            holidayCandidates.push({ id: ev.id, displayName: ev.displayName, baseTheme: ev.baseTheme, priority: ev.priority });
+          }
+        }
+
+        if (holidayCandidates.length > 0) {
+          holidayCandidates.sort((a, b) => b.priority - a.priority);
+          return holidayCandidates[0];
+        }
+
+        const mth = date.getMonth();
+        const d = date.getDate();
+
+        if ((mth === 11 && d >= 21) || mth === 0 || mth === 1 || (mth === 2 && d <= 19)) return { id: 'winter', displayName: 'Winter', baseTheme: 'ocean', priority: 20 };
+        if ((mth === 2 && d >= 20) || mth === 3 || mth === 4 || (mth === 5 && d <= 20)) return { id: 'spring', displayName: 'Spring', baseTheme: 'pastel', priority: 20 };
+        if ((mth === 5 && d >= 21) || mth === 6 || mth === 7 || (mth === 8 && d <= 22)) return { id: 'summer', displayName: 'Summer', baseTheme: 'forest', priority: 20 };
+        return { id: 'autumn', displayName: 'Autumn', baseTheme: 'sunset', priority: 20 };
+      }
+
+      let snowInterval = null;
+      let leafInterval = null;
+      let rainInterval = null;
+      let jumpscareTimeout = null;
+
+      let currentOccasion = null;
+      let currentTheme = DEFAULT_THEME;
+      let currentBaseTheme = DEFAULT_THEME;
+
+      function clearEffects() {
+        if (!effectsRoot) return;
+        if (snowInterval) { clearInterval(snowInterval); snowInterval = null; }
+        if (leafInterval) { clearInterval(leafInterval); leafInterval = null; }
+        if (rainInterval) { clearInterval(rainInterval); rainInterval = null; }
+        if (jumpscareTimeout) { clearTimeout(jumpscareTimeout); jumpscareTimeout = null; }
+        effectsRoot.innerHTML = '';
+      }
+
+      function pauseEffects() {
+        if (snowInterval) { clearInterval(snowInterval); snowInterval = null; }
+        if (leafInterval) { clearInterval(leafInterval); leafInterval = null; }
+        if (rainInterval) { clearInterval(rainInterval); rainInterval = null; }
+      }
+
+      function startSnow(mode) {
+        if (!effectsRoot || snowInterval) return;
+        const icons = mode === 'christmas' ? ['❄','❄','❄','🎄','🎅'] : ['❄','❄','❄','❄'];
+
+        snowInterval = setInterval(() => {
+          const flake = document.createElement('div');
+          flake.className = 'occasion-snowflake';
+          flake.textContent = icons[Math.floor(Math.random() * icons.length)];
+          flake.style.left = Math.random() * 100 + 'vw';
+          flake.style.animationDuration = 4 + Math.random() * 6 + 's';
+          flake.style.fontSize = 12 + Math.random() * 14 + 'px';
+          effectsRoot.appendChild(flake);
+          flake.addEventListener('animationend', () => flake.remove());
+        }, 500 + Math.random() * 400);
+      }
+
+      function startLeaves(mode) {
+        if (!effectsRoot || leafInterval) return;
+
+        let icons;
+        switch (mode) {
+          case 'halloween': icons = ['🍂','👻','💀','🎃']; break;
+          case 'autumn': icons = ['🍁','🍂','🍃']; break;
+          case 'norouz':
+          case 'spring': icons = ['🌸','🌷','🌼','🌿','🍀']; break;
+          case 'easter': icons = ['🐰','🍫','🥚','🥚','🍫']; break;
+          case 'summer': icons = ['☀️','🏖️','🎮','🏀','🍉','🍦']; break;
+          default: icons = ['🍁','🍂','🍃']; break;
+        }
+
+        leafInterval = setInterval(() => {
+          const leaf = document.createElement('div');
+          leaf.className = 'occasion-leaf';
+          leaf.textContent = icons[Math.floor(Math.random() * icons.length)];
+          leaf.style.left = Math.random() * 100 + 'vw';
+          leaf.style.animationDuration = 6 + Math.random() * 6 + 's';
+          leaf.style.fontSize = 16 + Math.random() * 14 + 'px';
+          effectsRoot.appendChild(leaf);
+          leaf.addEventListener('animationend', () => leaf.remove());
+        }, 600 + Math.random() * 500);
+      }
+
+      function scheduleHalloweenJumpscare() {
+        if (jumpscareTimeout) clearTimeout(jumpscareTimeout);
+        const delay = (20 + Math.random() * 20) * 1000;
+        jumpscareTimeout = setTimeout(triggerJumpscareOnce, delay);
+      }
+
+      function triggerJumpscareOnce() {
+        if (!effectsRoot) return;
+        const overlay = document.createElement('div');
+        overlay.className = 'occasion-jumpscare-overlay';
+        overlay.innerHTML = '<div class="occasion-jumpscare-face">👻</div>';
+        effectsRoot.appendChild(overlay);
+
+        setTimeout(() => {
+          overlay.remove();
+          if (currentOccasion && currentOccasion.id === 'halloween' && currentTheme === 'occasional') {
+            scheduleHalloweenJumpscare();
+          }
+        }, 900);
+      }
+
+      function showOccasionalOption(show, occasion) {
+        if (!selectEl) return;
+        const option = Array.from(selectEl.options).find(opt => opt.value === 'occasional');
+        if (!option) return;
+
+        if (show && occasion) {
+          option.hidden = false;
+          option.disabled = false;
+          option.textContent = 'Occasional – ' + occasion.displayName;
+        } else {
+          option.hidden = true;
+          option.disabled = true;
+        }
+      }
+
+      function applyOccasionEffects(occasion) {
+        clearEffects();
+        if (!occasion || currentTheme !== 'occasional') return;
+
+        switch (occasion.id) {
+          case 'christmas': startSnow('christmas'); break;
+          case 'winter': startSnow('winter'); break;
+          case 'halloween': startLeaves('halloween'); scheduleHalloweenJumpscare(); break;
+          case 'autumn': startLeaves('autumn'); break;
+          case 'norouz': startLeaves('norouz'); break;
+          case 'spring': startLeaves('spring'); break;
+          case 'easter': startLeaves('easter'); break;
+          case 'summer': startLeaves('summer'); break;
+          default: startLeaves('autumn'); break;
+        }
+      }
+
+      function applyTheme(theme, occasion) {
+        const normalized = allowedThemes.includes(theme) ? theme : DEFAULT_THEME;
+        currentTheme = normalized;
+        currentOccasion = occasion || null;
+
+        if (normalized === 'occasional' && occasion) {
+          const baseTheme = occasion.baseTheme && allowedThemes.includes(occasion.baseTheme)
+            ? occasion.baseTheme
+            : DEFAULT_THEME;
+          currentBaseTheme = baseTheme;
+
+          root.setAttribute('data-hub-theme', baseTheme);
+          setCookie(THEME_COOKIE_KEY, 'occasional', 365);
+          applyOccasionEffects(occasion);
+        } else {
+          currentBaseTheme = normalized;
+          clearEffects();
+          root.setAttribute('data-hub-theme', normalized);
+          setCookie(THEME_COOKIE_KEY, normalized, 365);
+        }
+
+        if (selectEl && selectEl.value !== normalized) selectEl.value = normalized;
+      }
+
+      document.addEventListener('DOMContentLoaded', function () {
+        if (!selectEl) return;
+
+        const today = new Date();
+        const occasion = detectOccasion(today);
+        const saved = getCookie(THEME_COOKIE_KEY);
+
+        if (occasion) showOccasionalOption(true, occasion);
+        else showOccasionalOption(false, null);
+
+        let initialTheme;
+        if (occasion) initialTheme = (!saved || saved === 'occasional') ? 'occasional' : saved;
+        else initialTheme = (saved && saved !== 'occasional') ? saved : DEFAULT_THEME;
+
+        applyTheme(initialTheme, occasion);
+        selectEl.value = currentTheme;
+
+        selectEl.addEventListener('change', function () {
+          applyTheme(selectEl.value, occasion);
+        });
+
+        document.addEventListener('visibilitychange', function () {
+          if (document.hidden) pauseEffects();
+          else if (currentOccasion && currentTheme === 'occasional') applyOccasionEffects(currentOccasion);
+        });
+      });
+    })();
+  </script>
+
+  <script>
+    function copyOtpOnClick() {
+      const otpElement = document.getElementById('otp-value');
+      const otpText = otpElement ? otpElement.textContent.trim() : '';
+      if (!otpText || otpText === '------') return;
+
+      navigator.clipboard.writeText(otpText).then(() => {
+        const oldTitle = otpElement.title;
+        otpElement.title = 'Copied!';
+        setTimeout(() => { otpElement.title = oldTitle || 'Click to copy'; }, 900);
+      }).catch(() => {});
+    }
+
+    function clearInput() {
+      const phoneNumberInput = document.getElementById('phoneNumber');
+      if (!phoneNumberInput) return;
+
+      phoneNumberInput.value = '';
+      const clearBtn = document.querySelector('.clear-btn');
+      if (clearBtn) clearBtn.style.display = 'none';
+
+      document.getElementById('otp-value').textContent = '—';
+      const resultBox = document.getElementById('resultBox');
+      if (resultBox) resultBox.style.display = 'none';
+
+      phoneNumberInput.focus();
+    }
+
+    function validateInput() {
+      const phoneNumberInput = document.getElementById('phoneNumber');
+      if (!phoneNumberInput) return;
+
+      phoneNumberInput.value = phoneNumberInput.value.replace(/\D/g, '');
+
+      if (phoneNumberInput.value.length > 11) {
+        phoneNumberInput.value = phoneNumberInput.value.slice(0, 11);
+      }
+
+      const clearBtn = document.querySelector('.clear-btn');
+      if (!clearBtn) return;
+
+      clearBtn.style.display = phoneNumberInput.value.length > 0 ? 'block' : 'none';
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const form = document.getElementById('otpForm');
+      const fetchBtn = document.getElementById('fetchBtn');
+      const otpEl = document.getElementById('otp-value');
+      const resultBox = document.getElementById('resultBox');
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const cell = (document.getElementById('phoneNumber').value || '').trim();
+
+        if (!cell) return;
+
+        fetchBtn.disabled = true;
+        const originalText = fetchBtn.value;
+        fetchBtn.value = 'Fetching...';
+
+        try {
+          const base = "{{ url_for('otp_catcher_fetch') }}";
+          const url = base + (base.includes('?') ? '&' : '?') + 'cell_number=' + encodeURIComponent(cell);
+
+          const res = await fetch(url, {
+            method: 'GET',
+            headers: { 'Accept': 'application/json' },
+            cache: 'no-store'
+          });
+
+          const data = await res.json().catch(() => ({}));
+
+          if (resultBox) resultBox.style.display = 'block';
+
+          if (!data || data.status !== 'PASS') {
+            otpEl.textContent = '------';
+            return;
+          }
+
+          if (data.otp) {
+            otpEl.textContent = String(data.otp);
+          } else {
+            otpEl.textContent = '------';
+          }
+        } catch (err) {
+          console.error(err);
+          if (resultBox) resultBox.style.display = 'block';
+          otpEl.textContent = '------';
+        } finally {
+          fetchBtn.disabled = false;
+          fetchBtn.value = originalText;
+        }
+      });
+    });
+  </script>
+</body>
+</html>

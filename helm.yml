@@ -1,0 +1,16 @@
+replicaCount: 1
+
+image:
+  repository: registry.example.com/test/api-robot-automated-test
+
+imagePullSecrets:
+  - name: gitlab-pull
+
+liveness:
+  enabled: false
+
+readiness:
+  enabled: false
+
+serviceMonitor:
+  enabled: false

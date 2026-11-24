@@ -1,0 +1,46 @@
+# Constant od shahkar inquiry 
+REQUESTER_APP_NAME: testData
+MIN_WEIGHT_AUTO_WEIGHTING: 0.05
+
+JIBIT_ENUM: 4
+SHAPARAK_ENUM: 5
+
+MONGO_DATA:
+  db_name: kyc_db
+  collection_name: shahkar_request_journals
+
+# test cell numbers and natopnal code
+CELL_NUMBERS:
+  validCellNumber: 09981255989
+  invalidCellNumber: 09981255999
+NATIONAL_CODE: 2282666917
+
+
+# response
+TRUE_SHAHKAR_RESPONSE:
+  result:
+    title: SUCCESS
+    status: 0
+    message: عملیات با موفقیت انجام شد
+    level: INFO
+  verified: true
+FAIL_SHAHKAR_RESPONSE:
+  result:
+    title: SUCCESS
+    status: 0
+    message: عملیات با موفقیت انجام شد
+    level: INFO
+  verified: false
+  
+# Error messages
+KYC_SETTING_VALIDATION_ERROR:
+  result:
+    title: KYC_SETTING_VALIDATION_ERROR
+    status: 160636
+    message: اعتبارسنجی تنظیمات سرویس مورد نظر با خطا مواجه شد.
+    level: WARN
+INVALID_PARAMETER:
+  result:
+    title: INVALID_PARAMETER
+    status: 1054
+    message: اطلاعات ورودی اشتباه است.

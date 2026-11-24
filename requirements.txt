@@ -1,0 +1,41 @@
+# Project name: API Automation Based on Robot
+# Readme: Readme.md
+
+##  Python Core
+PyYAML == 6.0.1
+openpyxl~=3.1.5
+pymongo==4.11.1
+psycopg2-binary==2.9.9
+mysql-connector-python==8.3.0
+redis==5.0.3
+beautifulsoup4==4.13.4
+jdatetime==5.2.0
+python-dateutil==2.9.0
+
+##  Robotframework Core
+robotframework == 7.*
+robotframework-tidy == 4.*
+robotframework-faker == 5.*
+robotframework-pabot == 2.*
+robotframework-requests == 0.9.7
+robotframework-jsonlibrary == 0.5
+robotframework-openapi-libcore == 1.8.5
+robotframework-datadriver == 1.*
+robotframework-http-rabbitmq == 1.0.3
+robotframework-autorecorder == 0.1.4
+
+##  Robotframework UI Core
+robotframework-seleniumlibrary == 6.*
+robotframework-seleniumtestability == 2.*
+robotframework-browser == 19.*
+webdriver-manager == 4.*
+
+##  Cortex Mini Application
+Flask~=3.1.0
+gunicorn==23.0.0
+
+## AI
+numpy<2               
+opencv-python==4.9.0.80  
+Pillow==10.1.0        
+# easyocr==1.7.1  

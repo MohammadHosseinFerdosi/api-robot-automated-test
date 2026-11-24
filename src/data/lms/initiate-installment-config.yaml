@@ -1,0 +1,15 @@
+LMS_TB_Init_Installment_ECN_AUTOMATION: "0142.011.11111111.01"
+LMS_TB_Init_Installment_FBAN_AUTOMATION: "3441050649"
+
+LMS_TB_Init_Installment_ECN_APP: "0142.095.88840998.05"
+LMS_TB_Init_Installment_FBAN_APP: "3441050649"
+# LMS MLT Init Installment ECN based on National Code
+LMS_MLT_Init_Installment_ECN:
+  "4101101000": "14021402022"
+  "7640000017": "14001400000"
+  
+LMS_MLT_Installment_Cell_Number_1: "09425028978"
+LMS_MLT_Installment_National_Code_1 : "4101101000"
+LMS_MLT_Installment_Cell_Number_2: "09520490432"
+LMS_MLT_Installment_National_Code_2 : "7640000017"
+

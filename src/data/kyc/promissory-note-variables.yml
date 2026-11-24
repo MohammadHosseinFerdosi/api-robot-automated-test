@@ -1,0 +1,133 @@
+# database data
+MONGO_DATA:
+  db_name: promissory_note_db
+  promissory_notes_collection: promissory_notes
+  setting_collection: settings
+
+# default data
+MIN_WEIGHT_AUTO_WEIGHTING: 0
+REQUESTER_APP_NAME: AutomationTestData
+RECIPIENT_CODE:
+  TEJARAT: 0
+  MELLAT: 1
+  DIGI_EXPRESS: 2
+  GARDESHGARI: 3
+
+# user data
+PROMISSORY_NOTE_USER_DATA:
+  owner:
+    userId: "e23134c5-0caf-4092-91fa-35436ce97ef9"
+    cellNumber: "09981255989"
+    nationalCode: "2282666917"
+    birthDate: "1377/09/15"
+    postalCode: "1959833956"
+    city: "تهران"
+    address: "جردن صبا غربی ساختمان پانیذ صبا کمپانی‌پی"
+  iban: "IR100120010000004153073769"
+  amount: "20000000"
+  dueType: "1"
+  dueOffsetInYears: "0"
+  recipientId: "pDZjr1B5q9MLavW02XPkgd4RxN6AOm"
+  description: "تست سفته اتومیشن"
+
+# response
+GARDESHGARI_DATA:
+  GARDESHGARI_ENUM: 3
+  GARDESHGARI_ROUTE_RESPONSE:
+    result:
+      title: SUCCESS
+      status: 0
+      message: عملیات با موفقیت انجام شد
+      level: INFO
+    provider: 3
+    providerName: "گردشگری"
+    hasPayment: true
+    mandatoryFields:
+      - trackingCode
+      - owner.cellNumber
+      - owner.nationalCode
+      - owner.birthDate
+      - postalCode
+      - amount
+      - description
+      - iban
+    hasRenew: false
+KUKNOS_DATA:
+  KUKNOS_ENUM: 1
+  KUKNOS_ROUTE_RESPONSE:
+    result:
+      title: SUCCESS
+      status: 0
+      message: عملیات با موفقیت انجام شد
+      level: INFO
+    provider: 1
+    providerName: ققنوس
+    hasPayment: true
+    mandatoryFields:
+      - trackingCode
+      - owner.cellNumber
+      - owner.nationalCode
+      - owner.birthDate
+      - iban
+      - dueType
+      - amount
+      - description
+    hasRenew: false
+ETEMAD_HOOSHMAND_DATA:
+  ETEMAD_HOOSHMAND_ENUM: 4
+  ETEMAD_HOOSHMAND_ROUTE_RESPONSE:
+    result:
+      title: SUCCESS
+      status: 0
+      message: عملیات با موفقیت انجام شد
+      level: INFO
+    provider: 4
+    providerName: "اعتماد هوشمند"
+    hasPayment: true
+    mandatoryFields:
+      - trackingCode
+      - owner.cellNumber
+      - owner.nationalCode
+      - owner.birthDate
+      - iban
+      - dueType
+      - amount
+      - description
+    hasRenew: false
+
+PROMISSORY_NOTE_SUCCESS_RESPONSE:
+  result:
+    title: SUCCESS
+    status: 0
+    message: عملیات با موفقیت انجام شد
+    level: INFO
+PROMISSORY_NOTE_NOT_FOUND_RESPONSE:
+  result:
+    title: PROMISSORY_NOTE_NOT_FOUND
+    status: 17709
+    message: سفته مورد نظر یافت نشد
+    level: WARN
+PROMISSORY_NOTE_INVALID_REFUND_STATUS:
+  result:
+    title: PROMISSORY_NOTE_INVALID_REFUND_STATUS
+    status: 17741
+    message: سفته در وضعیت مناسب برای بازگشت وجه نیست.
+    level: WARN
+PAYMENT_NOT_FOUND:
+  result:
+    title: PAYMENT_NOT_FOUND
+    status: 1042
+    message: اطلاعات پرداخت یافت نشد.
+    level: WARN
+INVALID_PARAMETER:
+  result:
+    title: INVALID_PARAMETER
+    status: 1054
+    message: اطلاعات ورودی اشتباه است.
+    level: WARN
+FAILRE_RESPONSE:
+  result:
+    title: FAILURE
+    status: 1000
+    message: عملیات ناموفق بود لطفا مجددا تلاش کنید
+    level: BLOCKER

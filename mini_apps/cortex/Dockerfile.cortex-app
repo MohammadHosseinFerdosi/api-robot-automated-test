@@ -1,0 +1,14 @@
+FROM registry.example.com/cicd/generic/python-nodejs:latest
+
+WORKDIR /CORTEX
+
+COPY ./src ./src
+COPY ./mini_apps ./mini_apps
+COPY ./requirements.txt ./requirements.txt
+
+RUN pip3 install --no-cache-dir --trusted-host pypi.example.com --index-url https://example.com/simple -r requirements.txt -U
+
+ENV APP_HOST=0.0.0.0
+ENV APP_PORT=8000
+
+CMD gunicorn -w 4 -b ${APP_HOST}:${APP_PORT} mini_apps.cortex.app:app

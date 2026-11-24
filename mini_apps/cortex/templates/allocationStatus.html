@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Allocation Task Submitted</title>
+    <link rel="icon" href="{{ url_for('static', filename='/images/dp-logo.jpg') }}" type="image/jpeg">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <!-- Apply theme from cookies (including 'occasional') as early as possible -->
+    <script>
+        (function () {
+            function getCookie(name) {
+                const cookieName = name + "=";
+                const decodedCookie = decodeURIComponent(document.cookie || "");
+                const cookieArray = decodedCookie.split(';');
+                for (let i = 0; i < cookieArray.length; i++) {
+                    let c = cookieArray[i].trim();
+                    if (c.indexOf(cookieName) === 0) {
+                        return c.substring(cookieName.length, c.length);
+                    }
+                }
+                return "";
+            }
+
+            const allowedThemes = [
+                'neon',
+                'legacy',
+                'dark',
+                'ocean',
+                'forest',
+                'sunset',
+                'terminal',
+                'pastel',
+                'grayscale',
+                'midnight',
+                'cyberpunk',
+                'aurora',
+                'desert',
+                'candy',
+                'ice',
+                'lava',
+                'blueprint',
+                'solarized',
+                'lavender',
+                'occasional'
+            ];
+
+            function computeWesternEaster(year) {
+                const a = year % 19;
+                const b = Math.floor(year / 100);
+                const c = year % 100;
+                const d = Math.floor(b / 4);
+                const e = b % 4;
+                const f = Math.floor((b + 8) / 25);
+                const g = Math.floor((b - f + 1) / 3);
+                const h = (19 * a + b - d - g + 15) % 30;
+                const i = Math.floor(c / 4);
+                const k = c % 4;
+                const l = (32 + 2 * e + 2 * i - h - k) % 7;
+                const m = Math.floor((a + 11 * h + 22 * l) / 451);
+                const month = Math.floor((h + l - 7 * m + 114) / 31); // 3 = March, 4 = April
+                const day = ((h + l - 7 * m + 114) % 31) + 1;
+                return new Date(year, month - 1, day);
+            }
+
+            const EVENTS = [
+                {
+                    id: 'christmas',
+                    displayName: 'Christmas',
+                    baseTheme: 'ocean',
+                    priority: 100,
+                    date: year => new Date(year, 11, 25)
+                },
+                {
+                    id: 'halloween',
+                    displayName: 'Halloween',
+                    baseTheme: 'sunset',
+                    priority: 90,
+                    date: year => new Date(year, 9, 31)
+                },
+                {
+                    id: 'norouz',
+                    displayName: 'Norouz',
+                    baseTheme: 'pastel',
+                    priority: 80,
+                    date: year => new Date(year, 2, 20)
+                },
+                {
+                    id: 'easter',
+                    displayName: 'Easter',
+                    baseTheme: 'forest',
+                    priority: 70,
+                    date: year => computeWesternEaster(year)
+                }
+            ];
+
+            function detectOccasion(date) {
+                const year = date.getFullYear();
+                const t = date.getTime();
+                const holidayCandidates = [];
+
+                // Holidays ±7 days
+                for (const ev of EVENTS) {
+                    const evDate = ev.date(year);
+                    const start = new Date(evDate.getTime());
+                    const end = new Date(evDate.getTime());
+                    start.setDate(start.getDate() - 7);
+                    end.setDate(end.getDate() + 7);
+
+                    if (t >= start.getTime() && t <= end.getTime()) {
+                        holidayCandidates.push({
+                            id: ev.id,
+                            displayName: ev.displayName,
+                            baseTheme: ev.baseTheme,
+                            priority: ev.priority
+                        });
+                    }
+                }
+
+                if (holidayCandidates.length > 0) {
+                    holidayCandidates.sort((a, b) => b.priority - a.priority);
+                    return holidayCandidates[0];
+                }
+
+                // Seasonal fallback
+                const m = date.getMonth();
+                const d = date.getDate();
+
+                // Winter: Dec 21 – Mar 19
+                if ((m === 11 && d >= 21) || m === 0 || m === 1 || (m === 2 && d <= 19)) {
+                    return {
+                        id: 'winter',
+                        displayName: 'Winter',
+                        baseTheme: 'ocean',
+                        priority: 20
+                    };
+                }
+                // Spring: Mar 20 – Jun 20
+                if ((m === 2 && d >= 20) || m === 3 || m === 4 || (m === 5 && d <= 20)) {
+                    return {
+                        id: 'spring',
+                        displayName: 'Spring',
+                        baseTheme: 'pastel',
+                        priority: 20
+                    };
+                }
+                // Summer: Jun 21 – Sep 22
+                if ((m === 5 && d >= 21) || m === 6 || m === 7 || (m === 8 && d <= 22)) {
+                    return {
+                        id: 'summer',
+                        displayName: 'Summer',
+                        baseTheme: 'forest',
+                        priority: 20
+                    };
+                }
+                // Autumn: Sep 23 – Dec 20
+                return {
+                    id: 'autumn',
+                    displayName: 'Autumn',
+                    baseTheme: 'sunset',
+                    priority: 20
+                };
+            }
+
+            // Resolve theme from cookies
+            let theme =
+                getCookie('qaCortexTheme') ||
+                getCookie('qaHubTheme') ||
+                getCookie('qaOtpTheme');
+
+            const htmlEl = document.documentElement;
+            let appliedTheme = 'neon';
+
+            if (theme === 'occasional') {
+                const occasion = detectOccasion(new Date());
+                if (occasion && occasion.baseTheme && allowedThemes.includes(occasion.baseTheme)) {
+                    appliedTheme = occasion.baseTheme;
+                } else {
+                    appliedTheme = 'neon';
+                }
+            } else {
+                if (!allowedThemes.includes(theme)) {
+                    appliedTheme = 'neon';
+                } else {
+                    appliedTheme = theme;
+                }
+            }
+
+            htmlEl.setAttribute('data-theme', appliedTheme);
+        })();
+    </script>
+
+    <style>
+        /* =========================================
+           THEME VARIABLES (reusing hub/cortex palette)
+           ========================================= */
+
+        :root {
+            --background-color: #f4f4f4;
+            --panel-bg: #ffffff;
+            --card-bg: #ffffff;
+            --text-color: #111827;
+            --hr-color: #d1d5db;
+            --button-bg: #007bff;
+            --button-hover: #0056b3;
+            --border-color: #dddddd;
+            --loading-color: #007bff;
+            --checkmark-color: #16a34a;
+            --cross-color: #b91c1c;
+        }
+
+        /* Neon Night (default) */
+        html[data-theme="neon"] {
+            --background-color: #050712;
+            --panel-bg: #0f1524;
+            --card-bg: #131b33;
+            --text-color: #f9fbff;
+            --hr-color: rgba(148, 163, 184, 0.7);
+            --button-bg: #0b5cff;
+            --button-hover: #0040c9;
+            --border-color: rgba(255, 255, 255, 0.18);
+            --loading-color: #38bdf8;
+            --checkmark-color: #22c55e;
+            --cross-color: #f97316;
+        }
+
+        /* Legacy */
+        html[data-theme="legacy"] {
+            --background-color: #f4f4f4;
+            --panel-bg: #ffffff;
+            --card-bg: lightblue;
+            --text-color: #000000;
+            --hr-color: #000000;
+            --button-bg: #007bff;
+            --button-hover: #0056b3;
+            --border-color: #dddddd;
+            --loading-color: #007bff;
+            --checkmark-color: #198754;
+            --cross-color: #dc2626;
+        }
+
+        /* Dark */
+        html[data-theme="dark"] {
+            --background-color: #222222;
+            --panel-bg: #333333;
+            --card-bg: #3f3f3f;
+            --text-color: #ffffff;
+            --hr-color: #ffffff;
+            --button-bg: #ff9800;
+            --button-hover: #e68a00;
+            --border-color: #555555;
+            --loading-color: #ff9800;
+            --checkmark-color: #22c55e;
+            --cross-color: #f97316;
+        }
+
+        /* Ocean */
+        html[data-theme="ocean"] {
+            --background-color: #021f3b;
+            --panel-bg: #063b5b;
+            --card-bg: #0a5274;
+            --text-color: #e5f7ff;
+            --hr-color: rgba(229, 247, 255, 0.7);
+            --button-bg: #17a2b8;
+            --button-hover: #138496;
+            --border-color: rgba(255, 255, 255, 0.22);
+            --loading-color: #38bdf8;
+            --checkmark-color: #22c55e;
+            --cross-color: #f97316;
+        }
+
+        /* Forest */
+        html[data-theme="forest"] {
+            --background-color: #04140a;
+            --panel-bg: #0b2612;
+            --card-bg: #114422;
+            --text-color: #e6ffed;
+            --hr-color: rgba(198, 246, 213, 0.7);
+            --button-bg: #22c55e;
+            --button-hover: #16a34a;
+            --border-color: rgba(209, 250, 229, 0.25);
+            --loading-color: #4ade80;
+            --checkmark-color: #bbf7d0;
+            --cross-color: #fecaca;
+        }
+
+        /* Sunset */
+        html[data-theme="sunset"] {
+            --background-color: #2b0b24;
+            --panel-bg: #3c102f;
+            --card-bg: #5c1a3d;
+            --text-color: #ffeaf5;
+            --hr-color: rgba(255, 228, 230, 0.7);
+            --button-bg: #fb923c;
+            --button-hover: #ea580c;
+            --border-color: rgba(254, 215, 170, 0.3);
+            --loading-color: #fdba74;
+            --checkmark-color: #bbf7d0;
+            --cross-color: #fecaca;
+        }
+
+        /* Terminal */
+        html[data-theme="terminal"] {
+            --background-color: #020617;
+            --panel-bg: #020817;
+            --card-bg: #020817;
+            --text-color: #e5e7eb;
+            --hr-color: #334155;
+            --button-bg: #22c55e;
+            --button-hover: #16a34a;
+            --border-color: #22c55e;
+            --loading-color: #22c55e;
+            --checkmark-color: #22c55e;
+            --cross-color: #f97316;
+        }
+
+        /* Pastel */
+        html[data-theme="pastel"] {
+            --background-color: #fdf2ff;
+            --panel-bg: #ffffff;
+            --card-bg: #ffe4f3;
+            --text-color: #4b5563;
+            --hr-color: #e5e7eb;
+            --button-bg: #ec4899;
+            --button-hover: #db2777;
+            --border-color: #f9a8d4;
+            --loading-color: #f472b6;
+            --checkmark-color: #22c55e;
+            --cross-color: #f97316;
+        }
+
+        /* Grayscale */
+        html[data-theme="grayscale"] {
+            --background-color: #111827;
+            --panel-bg: #1f2937;
+            --card-bg: #111827;
+            --text-color: #e5e7eb;
+            --hr-color: #4b5563;
+            --button-bg: #6b7280;
+            --button-hover: #4b5563;
+            --border-color: #374151;
+            --loading-color: #9ca3af;
+            --checkmark-color: #22c55e;
+            --cross-color: #f97316;
+        }
+
+        /* Midnight */
+        html[data-theme="midnight"] {
+            --background-color: #02010a;
+            --panel-bg: #05041a;
+            --card-bg: #090825;
+            --text-color: #e5e7ff;
+            --hr-color: rgba(129, 140, 248, 0.6);
+            --button-bg: #4f46e5;
+            --button-hover: #4338ca;
+            --border-color: rgba(129, 140, 248, 0.5);
+            --loading-color: #6366f1;
+            --checkmark-color: #22c55e;
+            --cross-color: #f97316;
+        }
+
+        /* Cyberpunk */
+        html[data-theme="cyberpunk"] {
+            --background-color: #050012;
+            --panel-bg: #12001e;
+            --card-bg: #1d0030;
+            --text-color: #f9fafb;
+            --hr-color: rgba(244, 114, 182, 0.7);
+            --button-bg: #ec4899;
+            --button-hover: #db2777;
+            --border-color: #22d3ee;
+            --loading-color: #22d3ee;
+            --checkmark-color: #22c55e;
+            --cross-color: #f97316;
+        }
+
+        /* Aurora */
+        html[data-theme="aurora"] {
+            --background-color: #020617;
+            --panel-bg: #041320;
+            --card-bg: #062133;
+            --text-color: #e0f2fe;
+            --hr-color: rgba(96, 165, 250, 0.7);
+            --button-bg: #22d3ee;
+            --button-hover: #0ea5e9;
+            --border-color: rgba(125, 211, 252, 0.6);
+            --loading-color: #22d3ee;
+            --checkmark-color: #22c55e;
+            --cross-color: #f97316;
+        }
+
+        /* Desert */
+        html[data-theme="desert"] {
+            --background-color: #3b1f0a;
+            --panel-bg: #5a3213;
+            --card-bg: #7c4520;
+            --text-color: #fef3c7;
+            --hr-color: rgba(254, 243, 199, 0.7);
+            --button-bg: #fbbf24;
+            --button-hover: #f59e0b;
+            --border-color: rgba(251, 191, 36, 0.5);
+            --loading-color: #facc15;
+            --checkmark-color: #22c55e;
+            --cross-color: #f97316;
+        }
+
+        /* Candy */
+        html[data-theme="candy"] {
+            --background-color: #fff0f6;
+            --panel-bg: #ffe4f1;
+            --card-bg: #ffd6e7;
+            --text-color: #4b5563;
+            --hr-color: #f9a8d4;
+            --button-bg: #fb7185;
+            --button-hover: #f97316;
+            --border-color: #f9a8d4;
+            --loading-color: #fb7185;
+            --checkmark-color: #22c55e;
+            --cross-color: #f97316;
+        }
+
+        /* Ice */
+        html[data-theme="ice"] {
+            --background-color: #e0f2fe;
+            --panel-bg: #f9fbff;
+            --card-bg: #e0f2fe;
+            --text-color: #0f172a;
+            --hr-color: #bae6fd;
+            --button-bg: #38bdf8;
+            --button-hover: #0284c7;
+            --border-color: #7dd3fc;
+            --loading-color: #38bdf8;
+            --checkmark-color: #22c55e;
+            --cross-color: #f97316;
+        }
+
+        /* Lava */
+        html[data-theme="lava"] {
+            --background-color: #1c0202;
+            --panel-bg: #3b0202;
+            --card-bg: #5b0b0b;
+            --text-color: #fee2e2;
+            --hr-color: rgba(248, 113, 113, 0.7);
+            --button-bg: #ef4444;
+            --button-hover: #b91c1c;
+            --border-color: rgba(248, 113, 113, 0.5);
+            --loading-color: #f97316;
+            --checkmark-color: #22c55e;
+            --cross-color: #fecaca;
+        }
+
+        /* Blueprint */
+        html[data-theme="blueprint"] {
+            --background-color: #020617;
+            --panel-bg: #020b25;
+            --card-bg: #021025;
+            --text-color: #e5f2ff;
+            --hr-color: #38bdf8;
+            --button-bg: #2563eb;
+            --button-hover: #1d4ed8;
+            --border-color: #60a5fa;
+            --loading-color: #38bdf8;
+            --checkmark-color: #22c55e;
+            --cross-color: #f97316;
+        }
+
+        /* Solarized */
+        html[data-theme="solarized"] {
+            --background-color: #002b36;
+            --panel-bg: #073642;
+            --card-bg: #073642;
+            --text-color: #eee8d5;
+            --hr-color: #586e75;
+            --button-bg: #268bd2;
+            --button-hover: #0f6ab8;
+            --border-color: #657b83;
+            --loading-color: #268bd2;
+            --checkmark-color: #22c55e;
+            --cross-color: #f97316;
+        }
+
+        /* Lavender */
+        html[data-theme="lavender"] {
+            --background-color: #f5f3ff;
+            --panel-bg: #fdf4ff;
+            --card-bg: #ede9fe;
+            --text-color: #312e81;
+            --hr-color: #c4b5fd;
+            --button-bg: #8b5cf6;
+            --button-hover: #7c3aed;
+            --border-color: #c4b5fd;
+            --loading-color: #8b5cf6;
+            --checkmark-color: #22c55e;
+            --cross-color: #f97316;
+        }
+
+        /* =========================================
+           GLOBAL STYLES
+           ========================================= */
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            text-align: center;
+            padding: 20px;
+            margin: 0;
+            transition: background 0.3s ease-in-out, color 0.3s ease-in-out;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: var(--panel-bg);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            transition: background 0.3s ease-in-out, color 0.3s ease-in-out, border-color 0.3s ease-in-out;
+            border: 1px solid var(--border-color);
+        }
+
+        .icon {
+            width: 100px;
+            height: 100px;
+            margin: 20px auto;
+        }
+
+        #loading-icon {
+            animation: rotate 1s linear infinite;
+            stroke: var(--loading-color);
+        }
+
+        #checkmark {
+            display: none;
+            color: var(--checkmark-color);
+        }
+
+        #cross {
+            display: none;
+            color: var(--cross-color);
+        }
+
+        @keyframes rotate {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .message {
+            font-size: 20px;
+            margin: 20px 0;
+        }
+
+        .log-container {
+            background: var(--card-bg);
+            color: var(--text-color);
+            text-align: left;
+            padding: 10px;
+            border-radius: 5px;
+            height: 200px;
+            overflow-y: scroll;
+            font-family: monospace;
+            font-size: 14px;
+            white-space: pre-wrap;
+            border: 1px solid var(--border-color);
+        }
+
+        .log-container div {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Loading / Status Icon -->
+        <div class="icon">
+            <svg id="loading-icon" viewBox="0 0 50 50">
+                <circle cx="25" cy="25" r="20" stroke="var(--loading-color)" stroke-width="5" fill="none" stroke-dasharray="31.415, 31.415" />
+            </svg>
+            <!-- Checkmark -->
+            <svg id="checkmark" viewBox="0 0 50 50">
+                <path d="M18.9 35.7L7.5 24.3l2.1-2.1 9.3 9.3 19.3-19.3 2.1 2.1z" fill="var(--checkmark-color)" />
+            </svg>
+            <!-- Cross -->
+            <svg id="cross" viewBox="0 0 50 50">
+                <path d="M10 10L40 40M40 10L10 40" stroke="var(--cross-color)" stroke-width="5" stroke-linecap="round" />
+            </svg>
+        </div>
+
+        <div class="message">Your Task Has Been Submitted. Please Wait for Its Results.</div>
+
+        <h3>Submitted Data:</h3>
+        <pre id="submitted-data"></pre>
+
+        <h3>Execution Logs:</h3>
+        <div class="log-container" id="log-console">[0] Waiting for updates...</div>
+    </div>
+
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        const requestData = {
+            cellNumber: params.get("cellNumber"),
+            nationalCode: params.get("nationalCode"),
+            session_id: params.get("session_id")
+        };
+
+        document.getElementById("submitted-data").innerText = JSON.stringify(requestData, null, 2);
+
+        let lastSeenLogs = [];
+        let intervalId;
+        let pollingInterval = 1000;
+        let reassuranceIntervalId;
+        const reassuranceMessage = "Still doing the task, do not panic. This may take a while...";
+        const abortController = new AbortController(); // For closing connections
+
+        function fetchLogs() {
+            fetch(`get-logs?session_id=${requestData.session_id}`, { signal: abortController.signal })
+                .then(response => response.json())
+                .then(data => {
+                    const logConsole = document.getElementById("log-console");
+
+                    logConsole.innerHTML = "";
+
+                    if (data.logs && data.logs.length > 0) {
+                        data.logs.forEach((log, index) => {
+                            if (log.trim() !== "") {
+                                const logLine = document.createElement("div");
+                                logLine.innerText = `[${index + 1}] ${log}`;
+                                logConsole.appendChild(logLine);
+                            }
+                        });
+                    } else {
+                        logConsole.innerText = "Waiting for updates...";
+                    }
+
+                    logConsole.scrollTop = logConsole.scrollHeight;
+
+                    if (data.logs.some(log => log.includes("task executed successfully") || log.includes("task execution failed"))) {
+                        clearInterval(intervalId);
+                        clearInterval(reassuranceIntervalId);
+                        abortController.abort(); 
+
+                        document.getElementById("loading-icon").style.display = "none";
+
+                        if (data.logs.some(log => log.includes("task executed successfully"))) {
+                            document.getElementById("checkmark").style.display = "block";
+                        } else if (data.logs.some(log => log.includes("task execution failed"))) {
+                            document.getElementById("cross").style.display = "block";
+                        }
+                    } else {
+                        if (pollingInterval === 1000) {
+                            clearInterval(intervalId);
+                            pollingInterval = 5000;
+                            intervalId = setInterval(fetchLogs, pollingInterval);
+                        }
+                    }
+                })
+                .catch(error => {
+                    if (error.name !== "AbortError") {
+                        console.error("Error fetching logs:", error);
+                    }
+                });
+        }
+
+        function displayReassuranceMessage() {
+            const logConsole = document.getElementById("log-console");
+            const reassuranceLine = document.createElement("div");
+            reassuranceLine.innerText = `[${logConsole.children.length + 1}] ${reassuranceMessage}`;
+            logConsole.appendChild(reassuranceLine);
+
+            logConsole.scrollTop = logConsole.scrollHeight;
+        }
+
+        fetchLogs();
+        intervalId = setInterval(fetchLogs, pollingInterval);
+        reassuranceIntervalId = setInterval(displayReassuranceMessage, 6000);
+    </script>
+</body>
+</html>

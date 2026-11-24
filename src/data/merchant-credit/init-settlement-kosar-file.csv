@@ -1,0 +1,3 @@
+*** Test Cases ***;${amount}
+Balances Amount  -10000;-10000
+Balances Amount  0;0

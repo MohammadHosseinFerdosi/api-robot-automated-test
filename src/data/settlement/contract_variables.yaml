@@ -1,0 +1,121 @@
+INVALID_MERCHANT_ID: c6d18a39-2a37-4f62-b530-
+DASHBOARD_ZONE: dashboard
+
+# STATUSES
+DRAFT_STATUS: 0
+REJECT_STATUS: 1
+ACTIVATE_STATUS: 2
+SUSPEND_STATUS: 3
+TERMINATE_STATUS: 4
+SALES_APPROVED_STATUS: 5
+SUCCESSFUL_CHANGE_CONTRACT_STATUS: successful_change_contract
+UNSUCCESSFUL_CHANGE_CONTRACT_STATUS: unsuccessful_change_contract
+
+
+SALES_REJECT_DESCRIPTION: sales reject description automate test
+FINANCE_REJECT_DESCRIPTION: finance reject description automate test
+
+INVALID_CHANGE_STATUS_CONTRACT_RESPONSE: SETTLEMENT_CHANGE_CONTRACT_STATUS_INVALID
+SUCCESS_CHANGE_STATUS_CONTRACT_RESPONSE: SUCCESS
+
+
+# RESPONSES
+SUCCESSFUL_CREATE_CONTRACT_CONTENT:
+  status_code: 200
+  result:
+    title: SUCCESS
+    status: 0
+    message: عملیات با موفقیت انجام شد
+    level: INFO
+
+DUPLICATE_CONTRACT_CONTENT:
+  status_code: 422
+  result:
+    title: SETTLEMENT_CONTRACT_DUPLICATE
+    status: 18707
+    message: قرارداد تکراری می‌باشد.
+    level: WARN
+
+INVALID_PERIOD_PARAMS_MATCH_CONTENT:
+  status_code: 422
+  result:
+    title: SETTLEMENT_PAYMENT_TERM_CONDITION_NOT_MATCHED
+    status: 18705
+    message: دسته‌بندی و نوع درگاه پرداخت با شرایط پرداخت مورد‌نظر هم‌خوانی ندارد.
+    level: WARN
+
+
+INVALID_GATEWAY_WITH_METHOD_CONTENT:
+  status_code: 422
+  result:
+    title: SETTLEMENT_METHOD_INCOMPATIBLE_WITH_GATEWAY
+    status: 18719
+    message: متد یا متدهای پرداختی با درگاه پرداخت قرارداد هم‌خوانی ندارد.
+    level: WARN
+
+INVALID_PARAMETERS_CONTENT:
+  status_code: 422
+  result:
+    title: "INVALID_PARAMETER"
+    status: 1054
+    message: "اطلاعات ورودی اشتباه است."
+    level: "WARN"
+
+
+
+
+# contract owner groups
+MERCHANT_PANEL_OWNER_GROUP: merchant-panel
+SALES_OFFLINE_INTERNAL_OWNER_GROUP: sales_offline_internal
+
+
+CLAUSES:
+  - method: "7"
+    periodParams:
+      - 2
+    settlementDelayDays: 2
+    periodicType: "0"
+    feeStrategy: "0"
+    feeProperties:
+      fixedFeePercent: 10
+    thresholdProperty:
+      amount: 0
+      count: 0
+
+
+CLAUSES_WITH_INVALID_PERIOD_PARAMS:
+  - method: "7"
+    periodParams:
+      - 2
+      - 5
+    settlementDelayDays: 2
+    periodicType: "0"
+    feeStrategy: "0"
+    feeProperties:
+      fixedFeePercent: 10
+    thresholdProperty:
+      amount: 0
+      count: 0
+
+
+CHANNEL_UPG_CONTRACT: 1
+INVALID_CHANNEL_CONTRACT: 30
+
+# gateway
+ICP_GATEWAY_ID: 8
+BPG_GATEWAY_ID: 10
+
+GUILD_CONTRACT: "digital"
+
+# credit gateway
+BPG_CREDIT_GATEWAY: 1
+
+# ctrdit channel
+UPG_CREDIT_CHANNEL: 1
+
+CREATE_CONTRACT_USER_ID: efadff5e-53bb-4b2b-b9f1-5bfbeead04b8
+
+
+
+
+

@@ -1,0 +1,171 @@
+workflow:
+  rules:
+    - if: $CI_COMMIT_BRANCH == "staging"
+      when: always
+    - when: never
+
+include:
+  - project: 'cicd/gitlab-ci-template'
+    ref: master
+    file:
+      - Jobs/DeployOld.gitlab-ci.yml
+
+  - component: ${CI_SERVER_FQDN}/cicd/components/python/default@$DP_CI_PYTHON_COMPONENTS_VERSION
+    inputs:
+      test-command: pytest
+
+  - component: ${CI_SERVER_FQDN}/cicd/components/python/default@$DP_CI_PYTHON_COMPONENTS_VERSION
+    inputs:
+      test-command: pytest
+      project-name: cortex
+      dockerfile: mini_apps/cortex/Dockerfile.cortex-app
+
+  - component: $CI_SERVER_FQDN/cicd/components/gitops/gitops-updater@$DP_CI_GITOPS_COMPONENTS_VERSION
+    inputs:
+      repo_url: https://example.com/cicd/gitops-stage-app.git
+      project-name: cortex
+      file_path: app/qa/cortex-values.yml
+
+variables:
+  PROJECT_NAME: "$CI_PROJECT_NAME"
+  # APP_CONFIGURATION: "$CI_COMMIT_BRANCH"
+  BUILD_NUMBER: "$CI_PIPELINE_ID"
+  GIT_COMMIT: "$CI_COMMIT_SHORT_SHA"
+  DOCKERFILE_NAME: Dockerfile
+  TAG: "${BUILD_NUMBER}-${GIT_COMMIT}"
+  IMAGE_TAG: "$CI_PIPELINE_ID-$CI_COMMIT_SHORT_SHA"
+  HELM_CHART: platform/app-chart
+  HELM_VALUES: helm.yml
+  HELM_TIMEOUT: 5m
+  GIT_STRATEGY: clone
+  GIT_SUBMODULE_STRATEGY: recursive
+  GIT_SUBMODULE_FORCE_HTTPS: 'true'
+  GIT_SUBMODULE_DEPTH: 0
+  TRIGGER_CONTEXT: 'null'
+  PORT: 8090
+  HELM_URL: "https://example.com/api/v4/projects/592/packages/helm/stable"
+  CHART_VERSION: '2.1.0'
+  NAMESPACE: "qa"
+  RUNNER_TAG: ps
+  DOCKER_HOST: tcp://localhost:2376
+  DOCKER_TLS_VERIFY: "1"
+  DOCKER_CERT_PATH: "/certs/client"
+  REPO_URL: https://example.com/cicd/gitops-stage-app.git
+
+stages:
+  - build
+  - deploy
+  - build-deploy
+  - test
+  - collect_artifacts
+
+build-cortex:
+  script:
+  - |
+    if [ -z "$CI_COMMIT_TAG" ]; then
+    export TAG="$CI_PIPELINE_ID-$CI_COMMIT_SHORT_SHA"
+    else
+    export TAG="$CI_COMMIT_TAG"
+    fi
+  - |
+    docker build \
+      -f mini_apps/cortex/Dockerfile.cortex-app \
+      -t $CI_REGISTRY_IMAGE/cortex:$TAG \
+      -t $CI_REGISTRY_IMAGE/cortex:latest .
+  - docker push $CI_REGISTRY_IMAGE/cortex:$TAG
+  - docker push $CI_REGISTRY_IMAGE/cortex:latest
+
+
+
+
+
+Test:
+  variables:
+    RUNNER_AFTER_SCRIPT_TIMEOUT: 9h
+  stage: test
+  image: oci.example.com/dtzar/helm-kubectl:4.0
+  extends:
+    - .deploy
+  script:
+    - helm repo add platform ${HELM_URL}
+    - helm repo update
+    - helm upgrade --install -n $NAMESPACE -f $HELM_VALUES --set image.tag="$IMAGE_TAG" $PROJECT_NAME $HELM_CHART --wait --atomic --timeout "$HELM_TIMEOUT" --description $CI_COMMIT_SHA --version ${CHART_VERSION} $OTHER_HELM_FLAG
+  after_script:
+    - |
+      set +e
+      while true
+      do
+        sleep 10
+        POD_NAME=`kubectl get po -n ${NAMESPACE} -l app.kubernetes.io/instance=${PROJECT_NAME} | tail -1 | cut -d' ' -f1`
+        POD_STATUS=`kubectl get po -n ${NAMESPACE} -l app.kubernetes.io/instance=${PROJECT_NAME} | tail -1 | cut -d' ' -f9`
+        if [ $POD_STATUS = 'Running' ]
+        then
+          sleep 5
+          kubectl -n ${NAMESPACE} exec $POD_NAME -- /bin/bash /app/qa-script-api.sh || echo "QA script execution failed"
+          break
+        fi
+      done
+
+Collect Full Artifacts:
+  stage: collect_artifacts
+  image: oci.example.com/dtzar/helm-kubectl:4.0
+  script:
+    - set +e
+    - POD_NAME=`kubectl get po -n ${NAMESPACE} -l app.kubernetes.io/instance=${PROJECT_NAME} | tail -1 | cut -d' ' -f1`
+    - echo "${POD_NAME}"
+    - kubectl -n ${NAMESPACE} cp $POD_NAME:/app/results_full/ ./results_full || echo "Failed to copy full logs"
+    - ls ./results_full
+    - kubectl -n ${NAMESPACE} cp $POD_NAME:/app/results_full/summary-result.txt ./summary-result.txt || echo "Failed to fetch summary result"
+    - cat ./summary-result.txt
+  tags:
+    - ${RUNNER_TAG}
+  artifacts:
+    paths:
+      - /builds/test/api-robot-automated-test/results_full/
+      - /builds/test/api-robot-automated-test/summary-result.txt
+  after_script:
+    - |
+        export ARTIFACT_URL="${CI_PROJECT_URL}/-/jobs/${CI_JOB_ID}/artifacts/download?file_type=archive"
+        payload=$(jq -n --arg text "\`\`\`$(cat summary-result.txt)\`\`\`" '{text: $text}' | sed 's/\\n[[:space:]]*/\\n/g')
+        curl -X POST -H "Content-Type: application/json" "https://example.com/cliq/company/739017545/api/v2/channelsbyname/testnotify/message?zapikey=${ZAPI_TOKEN}" -d "$payload"
+        curl -X POST -H "Content-Type: application/json" "https://example.com/cliq/company/739017545/api/v2/channelsbyname/testnotify/message?zapikey=${ZAPI_TOKEN}" -d "{\"text\": \"Full Log Download: $ARTIFACT_URL\"}"
+        curl -X POST -H "Content-Type: application/json" "https://example.com/teams/default19b5769ae2bf4192ab25def56f6922.3c.environment/powerautomate/automations/direct/cu/29/workflows/b814e91b61e04d338fdc8b7ce420f900/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=LsrcFnsWv65uXRQdyXz8DtTVw_DMuFpRbFzuGuE7QPc" -d '{
+          "type": "AdaptiveCard",
+          "$schema": "https://adaptivecards.io/schemas/adaptive-card.json",
+          "version": "1.4",
+          "body": [
+            {
+              "type": "TextBlock",
+              "text": "✅ API Robot Test Results",
+              "weight": "Bolder",
+              "size": "Large"
+            },
+            {
+              "type": "TextBlock",
+              "text": "Test Summary: $(cat summary-result.txt | head -1)"
+            },
+            {
+              "type": "TextBlock",
+              "text": "Full Log Download: '"$ARTIFACT_URL"'"
+            }
+          ]
+        }'
+
+Collect Minimal Artifacts:
+  stage: collect_artifacts
+  image: oci.example.com/dtzar/helm-kubectl:4.0
+  script:
+    - set +e
+    - POD_NAME=`kubectl get po -n ${NAMESPACE} -l app.kubernetes.io/instance=${PROJECT_NAME} | tail -1 | cut -d' ' -f1`
+    - echo "${POD_NAME}"
+    - kubectl -n ${NAMESPACE} cp $POD_NAME:/app/results_minimal/ ./results_minimal || echo "Failed to copy minimal logs"
+    - ls ./results_minimal
+  tags:
+    - ${RUNNER_TAG}
+  artifacts:
+    paths:
+      - /builds/test/api-robot-automated-test/results_minimal/
+  after_script:
+    - |
+        export ARTIFACT_URL="${CI_PROJECT_URL}/-/jobs/${CI_JOB_ID}/artifacts/download?file_type=archive"
+        curl -X POST -H "Content-Type: application/json" "https://example.com/cliq/company/739017545/api/v2/channelsbyname/testnotify/message?zapikey=${ZAPI_TOKEN}" -d "{\"text\": \"Minimal Log Download: $ARTIFACT_URL\"}"

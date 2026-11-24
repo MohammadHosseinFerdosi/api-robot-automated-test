@@ -1,0 +1,18 @@
+{
+    "branchCode": "3046",
+    "lastInstallmentMaturityDate": "2025-02-16T00:00:00+03:30",
+    "currentMaturityDate": "2025-02-16T00:00:00+03:30",
+    "totalInstallmentAmount": 10000000,
+    "currentInstallmentAmount": 10000,
+    "totalInstallmentsNo": 80,
+    "currentInstalledNo": 47,
+    "currentInstalledAmount": 70000,
+    "installmentAmount": 70000,
+    "currentInstalledPenalty": 5000,
+    "loanDate": "2025-02-16T00:00:00+03:30",
+    "account": "0114885582326",
+    "payableAmount": 10000,
+    "paymentTypeCode": "01",
+    "chargeCode": 0,
+    "status": "NORMAL"
+}

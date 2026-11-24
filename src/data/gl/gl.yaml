@@ -1,0 +1,15 @@
+CREDIT_PURCHASE_EVENT_CODE: 3001
+CREDIT_PREPAYMENT_EVENT_CODE: 3002
+REFUND_EVENT_CODE: 3003
+PARENT_EVENT_CODE: null
+AMOUNT: 1000
+CLIENT_ID: dGVzdDpwYXNz
+INNER_JSON_3001: |
+  {"finalStatus":"CONFIRMED","userId":"c1d5c8d8-a7db-41d5-904d-378256903ef1","customerName":null,"cellNumber":"09884801023","nationalCode":"0078988993","customerWalletId":null,"productDesc":null,"productLine":"CREDIT","product":17,"productName":"CREDIT_PURCHASE","rrn":null,"amount":100000,"feeCharge":0,"effectiveDate":"11/9/25, 11:12 AM","registerDate":"11/9/25, 11:12 AM","gateway":"BPG","actionCode":"6543024829081854","fundProvider":"PLATFORM","creditAmount":30000,"creditInterest":0,"cashPayAmount":30000,"prepaymentAmount":0,"roundOffAmount":0,"providerId":"company-user-id","providerName":"کمپانی","contractInstallmentCount":3,"contractKey":"PLATFORM_3","fundProviderId":"8dd5fff6-e9a0-48bd-8102-0549849425a3","creditId":"7297063101762674120992","basketId":"6543024829081854","fpType":"leasing","couponTrackingCode":"13592299071762674144822","couponAmount":40000,"fpServiceType":0}
+INNER_JSON_3002: |
+  {"finalStatus":"CONFIRMED","userId":"951b9b95-b071-48d9-b116-c2505cd326a4","customerName":null,"cellNumber":"09121792230","nationalCode":null,"customerWalletId":null,"productDesc":"مبلغ ۱٫۵۰۲٫۰۰۰ ریال بابت پیش پرداخت و مبلغ ۱٫۵۰۲٫۰۰۰ ریال، پرداخت نقدی شما می باشد","productLine":"CREDIT","product":34,"productName":"CREDIT_PREPAYMENT","rrn":"232821474984","amount":1502000,"feeCharge":0,"effectiveDate":"1/26/23, 10:58 AM","registerDate":"1/26/23, 10:58 AM","pspStatus":null,"gateway":"IPG","fundProvider":"PLATFORM","description":"مبلغ ۱٫۵۰۲٫۰۰۰ ریال بابت پیش پرداخت و مبلغ ۱٫۵۰۲٫۰۰۰ ریال، پرداخت نقدی شما می باشد","purchaseTrackingCode":"1939957421674718055241","creditFeeCharge":0,"cashPayAmount":1502000,"prepaymentAmount":0,"contractAmount":10000000,"contractInstallmentCount":1,"contractInterestPercentage":0.0,"providerId":"eec4d9b0-e5cb-4712-a896-a458f432c8d1","providerName":"کمپانی","fundProviderId":"8dd5fff6-e9a0-48bd-8102-0549849425a3","contractKey":"PLATFORM_10000000_1_0.0","creditId":"13047233081673104542352","basketId":"235692546","fpType":"leasing","pspName":"MELLAT","pspId":"003"}
+INNER_JSON_3003: |
+  {"finalStatus":"CONFIRMED","userId":"fea3d3c0-8e69-436b-b341-be206bed0718","customerName":"علیرضا","cellNumber":"09186023036","nationalCode":"4072885363","customerWalletId":null,"productDesc":"14511071351674149978852","productLine":"CREDIT","product":12,"productName":"REFUND","rrn":"17530398741674716473620","amount":194200,"feeCharge":0,"effectiveDate":"1/26/23, 10:59 AM","registerDate":"1/26/23, 10:31 AM","target":null,"providerCode":"1","providerName":null,"targetTypeName":"CREDIT","providerTypeName":"CREDIT","businessId":"eec4d9b0-e5cb-4712-a896-a458f432c8d1","businessName":"کمپانی","parentProviderId":null,"parentProviderName":null,"contractAmount":300000000,"contractInstallmentCount":18,"contractInterestPercentage":18.0,"fundProvider":"MELLAT","fpType":"leasing","exactType":2,"exactTypeName":"CREDIT","cashAmount":0,"creditAmount":0}
+GL_DB_NAME: general_ledger_db
+USER_ID: test-user
+COOKIE: TS01f193a8=xxxx; TS01f193a8=yyyy

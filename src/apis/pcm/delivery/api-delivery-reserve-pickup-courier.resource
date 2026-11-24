@@ -1,0 +1,62 @@
+*** Settings ***
+Library     RequestsLibrary
+Resource    services/backend/session-service.resource
+
+
+*** Keywords ***
+Post delivery reserve pickup-courier
+    [Documentation]    pickup-courier for
+    ...    ${logistic_Token}
+    ...    ${city_id}
+    ...    ${street_address}
+    ...    ${postal_code}
+    ...    ${number}
+    ...    ${unit}
+    ...    ${latitude}
+    ...    ${longitude}
+    ...    ${timeslotid}
+    ...    ${reserve_date}
+    [Arguments]    ${api_call_side}
+    ...    ${logistic_Token1}
+    ...    ${city_id}
+    ...    ${street_address}
+    ...    ${postal_code}
+    ...    ${number}
+    ...    ${unit}
+    ...    ${latitude}
+    ...    ${longitude}
+    ...    ${timeslotid}
+    ...    ${reserve_date}
+    ...    ${user_id}
+    ...    ${x_api_version}
+
+    ${body}    Create Dictionary
+    ...    logistictoken=${logistic_token1}
+    ...    cityId=${city_id}
+    ...    streetaddress=${street_address}
+    ...    postalcode=${postal_code}
+    ...    no=${number}
+    ...    unit=${unit}
+    ...    latitude=${latitude}
+    ...    longitude=${longitude}
+    ...    timeslotid=${timeslotid}
+    ...    reservedate=${reserve_date}
+
+    ${api_path}    Set Variable    /api/delivery/reserve/pickup-courier
+
+    IF    '${api_call_side}' == '${MICROSERVICE_SIDE}'
+        ${api_path}    Set Variable    ${MS_BACKOFFICE_LANDING_PATH}${api_path}
+    END
+
+    ${session}    Create A Session    ${api_call_side}
+    ${headers}    Create Dictionary
+    ...    X-Api-Version=${x_api_version}
+    ...    user-id=${user_id}
+    ${response}    POST On Session
+    ...    ${session}
+    ...    ${api_path}
+    ...    headers=${headers}
+    ...    json=${body}
+    ...    expected_status=any
+    ${result}    Create Dictionary    status_code=${response.status_code}    body=${response.json()}
+    RETURN    ${result}

@@ -1,0 +1,184 @@
+USER_ID: "a8342841-2a52-4cc8-8b01-689869e0bbeb"
+USER_CELL_NUMBER: "09148918991"
+REQUESTER_APP_NAME: credit-onboarding
+CUSTOM_VIDEO_TEXT: "مادر آب جوش را در فنجان میریزد"
+
+SIGNATURE_TYPE: 1
+
+REGISTER_DATA:
+  type: 1
+  name:
+    firstName: "فرزاد"
+    lastName: "نیکرفتارخیابانی"
+  englishName:
+    firstName: "farzad"
+    lastName: "nikraftarkhiabani"
+  nationalCard:
+    code: "1363033379"
+    serial: "8G32699384"
+  birthDate: "1380/05/16"
+  postalCode: "1461755535"
+  nationalCardExpirationDate: "1410/01/01"
+  fatherName: "ابراهیم"
+  address: "نامشخص"
+  city: "تهران"
+  province: "تهران"
+  gender: 1
+  customVideoText: "مادر آب جوش را در فنجان میریزد"
+
+DIGITAL_SIGNATURE_USER_DATA:
+  birthDate: "2001-08-07"
+  name:
+    firstName: "فرزاد"
+    lastName: "نیکرفتارخیابانی"
+  englishName:
+    firstName: "farzad"
+    lastName: "nikraftarkhiabani"
+  nationalCard:
+    code: "1363033379"
+    serial: "8G32699384"
+  postalCode: "1461755535"
+  type: 1
+  livenessType: 1
+  gender: 1
+  password: "CHANGE_ME"
+  customVideoText: "مادر آب جوش را در فنجان میریزد"
+
+USER_PASSWORD_DATA:
+  type: 1
+  password: "CHANGE_ME"
+
+SIGNATURE_DATA:
+  signatureType: 1
+  signatureFileName: signature.png
+
+SELFIE_DATA:
+  signatureType: 1
+  selfieFileName: selfie.jpg
+
+VIDEO_DATA:
+  signatureType: 1
+  selfieVideoFileName: video.mp4
+
+FIXTURES:
+  signature: fixtures/signature.png
+  selfie: fixtures/selfie.jpg
+  video: fixtures/video.mp4
+  wrong_selfie: fixtures/wrong-selfie.jpg
+  wrong_video: fixtures/wrong-video.mp4
+
+LIVENESS_STATUS:
+  REGISTRATION: 10
+  SAVE_SIGNATURE: 20
+  SAVE_SELFIE: 30
+  VERIFY: 50
+
+DSP_STATUS:
+  PENDING: 0
+  INITIATED: 1
+  REVOKED: 2
+
+DSP_MONGO_DATA:
+  db_name: digital_signature_provider_db
+  digital_signatures_collection: digital_signatures
+
+LIVENESS_MONGO_DATA:
+  db_name: kyc_liveness_db
+  liveness_collection: liveness
+  liveness_journal_collection: liveness_journal
+
+SUCCESS_RESPONSE:
+  result:
+    title: SUCCESS
+    status: 0
+    message: عملیات با موفقیت انجام شد
+    level: INFO
+
+SUCCESS_RESPONSE_FOR_GENERATE_SIGNATURE:
+  result:
+    title: SUCCESS
+    status: 0
+    message: عملیات با موفقیت انجام شد
+    level: INFO
+  description: امضا دیجیتال، به صورت رمزگذاری شده در حافظه گوشی شما ذخیره شده است. با پاک کردن اپلیکیشن و یا پاک کردن اطلاعات آن امضای دیجیتال خود را از دست داده و دوباره باید مراحل دریافت آن را طی کنید.
+  imageId: signature-generate-success
+  statusText: امضای شما با موفقیت ساخته شد.
+
+DIGITAL_SIGNATURE_INCOMPLETE_LIVENESS:
+  result:
+    title: DIGITAL_SIGNATURE_INCOMPLETE_LIVENESS
+    status: 16121
+    message: زنده سنجی کاربر برای ساخت امضاء به طور کامل انجام نشده است.
+    level: WARN
+
+KYC_LIVENESS_INVALID_LIVENESS_STATUS:
+  result:
+    title: KYC_LIVENESS_INVALID_LIVENESS_STATUS
+    status: 18203
+    message: خطای وضعیت در فراخوانی سرویس های زنده سنجی
+    level: WARN
+
+KYC_LIVENESS_PROVIDER_IMAGE_DOES_NOT_MATCH:
+  result:
+    title: KYC_LIVENESS_PROVIDER_IMAGE_DOES_NOT_MATCH
+    status: 18216
+    message: تصویر ارسال شده با تصویر مرجع تطابق ندارد.
+    level: WARN
+
+KYC_LIVENESS_PROVIDER_MAX_RETRY_REACHED:
+  result:
+    title: KYC_LIVENESS_PROVIDER_MAX_RETRY_REACHED
+    status: 18215
+    message: تعداد تلاش برای انجام این عملیات از حد مجاز تجاوز کرده است.
+    level: WARN
+
+KYC_LIVENESS_PROVIDER_PROCESS_ERROR:
+  result:
+    title: KYC_LIVENESS_PROVIDER_PROCESS_ERROR
+    status: 18213
+    message: خطا در پردازش عملیات زنده سنجی سرویس دهنده
+    level: BLOCKER
+
+INVALID_PARAMETER_FOR_SIGNATURE_FILE:
+  result:
+    title: INVALID_PARAMETER
+    status: 1054
+    message: محتویات امضای خیس وارد نشده است
+
+INVALID_PARAMETER_FOR_SELFIE_IMAGE_FILE:
+  result:
+    title: INVALID_PARAMETER
+    status: 1054
+    message: محتویات تصویر سلفی ارسال نشده است
+
+INVALID_PARAMETER_FOR_SELFIE_VIDEO_FILE:
+  result:
+    title: INVALID_PARAMETER
+    status: 1054
+    message: محتویات ویدیو سلفی ارسال نشده است
+
+BAD_REQUEST:
+  result:
+    title: BAD_REQUEST
+    status: 2003
+    message: درخواست ورودی معتبر نمی باشد
+    level: WARN
+
+DIGITAL_SIGNATURE_NOT_FOUND:
+  result:
+    title: DIGITAL_SIGNATURE_NOT_FOUND
+    status: 16108
+    message: امضا دیجیتال یافت نشد.
+    level: WARN
+
+DIGITAL_SIGNATURE_PASSWORD_MISMATCH:
+  result:
+    title: DIGITAL_SIGNATURE_PASSWORD_MISMATCH
+    status: 16116
+    message: عدم تطابق کلمه عبور با مقدار تعیین شده قبلی
+    level: WARN
+
+PROVIDER_ERROR_MESSAGE_FOR_VIDEO:
+  providerMessage1: "عدم تطبیق گفتار و متن - لطفا در محیطی آرام متن را با صدای بلند بخوانید. تعداد تلاش باقیمانده : 2 از 3"
+  providerMessage2: "عدم تطبیق گفتار و متن - لطفا در محیطی آرام متن را با صدای بلند بخوانید. تعداد تلاش باقیمانده : 1 از 3"
+  providerMessage3: "عدم تطبیق گفتار و متن - لطفا در محیطی آرام متن را با صدای بلند بخوانید. تعداد تلاش باقیمانده : 0 از 3"

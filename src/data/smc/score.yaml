@@ -1,0 +1,55 @@
+#INPUT DATA
+CELL_NUMBER_VALID: 09124648364
+CELL_NUMBER_INVALID: 091246
+NATIONAL_CODE_VALID: 0068508247
+NATIONAL_CODE_INVALID: 0065247
+NATIONAL_CODE_BLOCK: 4900470562
+NATIONAL_CODE_VALID_NEWUSER: 2372313886
+SCORE_TYPE_DP: 0
+SCORE_TYPE_BANK: 3
+SCORE_TYPE_SALLARY: 4
+SCORE_TYPE_INVALID: 55
+SERVICE_TYPE_BNPL: 0
+SERVICE_TYPE_INVALID: 33
+TRACKING_CODE_INVALID: "   " 
+
+# RESPONSES
+SUCCESSFUL_SCORE:
+  status_code: 200
+  result:
+  title: SUCCESS
+  status: 0
+  message: عملیات با موفقیت انجام شد
+  level: INFO
+
+INVALID_PARAMETERS_SCORE:
+  status_code: 422
+  result:
+  title: INVALID_PARAMETER
+  status: 1054
+  message: اطلاعات ورودی اشتباه است.
+  level: WARN
+
+FAILURE:
+  status_code: 400
+  result:
+  title: FAILURE
+  status: 1000
+  message: عملیات ناموفق بود لطفا مجددا تلاش کنید 
+  level: BLOCKER
+
+INVALID_NATIONAL_CODE:
+  status_code: 422
+  result:
+  title: INVALID_PARAMETER
+  status: 1054
+  message: کد ملی اشتباه وارد شده است.
+  level: WARN
+  
+INVALID_DUPLICATE_TRACKINGCODE:
+  status_code: 422
+  result:
+  title: INVALID_PARAMETER
+  status: 1054
+  message: score with tracking code
+  level: WARN

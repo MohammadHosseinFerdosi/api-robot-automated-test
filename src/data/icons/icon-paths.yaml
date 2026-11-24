@@ -1,0 +1,23 @@
+ICON_MLT_IPG_ACCEPT : "./src/data/icons/captcha/icon-pay-captcha-mlt.jpg"
+
+ICON_LOGIN_STEP_1 : "./src/data/icons/login/login-icon-aggrement-btn.jpg"
+
+ICON_TOPUP_VERSION_2 : "./src/data/icons/hub/icon-topup-version-2.jpg"
+ICON_TOPUP_MOBILE_DATA_VERSION_2 : "./src/data/icons/hub/icon-topup-mobile-data-version-2.jpg"
+ICON_TOPUP_MOBILE_BILL_VERSION_2 : "./src/data/icons/hub/icon-topup-mobile-bill-version-2.jpg"
+
+ICON_CONFIRM_PAY_VERSION_1 : "./src/data/icons/general/icon-confirm-pay-version-1.jpg"
+ICON_CONFIRM_PAY_VERSION_2 : "./src/data/icons/general/icon-confirm-pay-version-2.jpg"
+ICON_CONFIRM_PAY_VERSION_3 : "./src/data/icons/general/icon-confirm-pay-version-3.jpg"
+ICON_CONFIRM_PAY_VERSION_4 : "./src/data/icons/general/icon-confirm-pay-version-4.jpg"
+ICON_CONTINUE_PAY_VERSION_1 : "./src/data/icons/general/icon-continue-pay-version-1.jpg"
+ICON_CUSTOM_AMOUNT_VERSION_1 : "./src/data/icons/general/icon-custom-amount-input-version-1.jpg"
+
+ICON_BUY_TOPUP_PLAN_2 : "./src/data/icons/topup/icon-buy-topup-plan-2.jpg"
+ICON_TOPUP_CHOOSE_PLAN : "./src/data/icons/topup/icon-choose-pay-method-dropdown.jpg"
+ICON_TOPUP_CHOOSE_MOBILE_DATA_VERSION_1 : "./src/data/icons/topup/icon-choose-mobile-data-package-version-1.jpg"
+ICON_TOPUP_CHOOSE_MOBILE_DATA_VERSION_2 : "./src/data/icons/topup/icon-choose-mobile-data-package-version-2.jpg"
+ICON_TOPUP_CHOOSE_MOBILE_DATA_VERSION_3 : "./src/data/icons/topup/icon-choose-mobile-data-package-version-3.jpg"
+ICON_TOPUP_PAY_METHOD_3 : "./src/data/icons/topup/icon-buy-topup-pay-method-3.jpg"
+ICON_TOPUP_INSERT_PHONE_NUMBER : "./src/data/icons/topup/icon-insert-phone-number.jpg"
+ICON_TOPUP_CHOOSE_BILL_VERSION_1 : "./src/data/icons/topup/icon-choose-mobile-bill-version-1.jpg"

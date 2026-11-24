@@ -1,0 +1,416 @@
+*** Settings ***
+Library     library/faker_utils.py    WITH NAME    FakerLibrary
+Library     RequestsLibrary
+Resource    apis/lms/credit-core/post-ticket-features.resource
+Resource    apis/lms/credit-core/post-credit-gateway-activate.resource
+Resource    apis/lms/credit-core/post-credit-gateways-disable.resource
+Resource    services/backend/import-allocation.resource
+Resource    apis/lms/credit-core/post-admin-credit-accounts-block.resource
+Resource    services/backend/user-wallet-initializer-service.resource
+Resource    services/backend/LMS/credit-core/expire-credit-account.resource
+Resource    apis/lms/credit-core/post-credit-accounts-schedule-close.resource
+
+
+*** Keywords ***
+############################################################################################################################################################################
+# Merchant Initialization
+Initialize Merchant
+    [Documentation]    This is a ```Test Setup``` that generated a merchant that can be used to perform a purchases on and validate the API
+    [Arguments]    ${BUSINESS_ID_FOR_CHARGE_TEST_WALLETS}=${BUSINESS_ID_FOR_CHARGE_TEST_WALLETS}
+
+    ${spend_wallet_for_business_1}    Create Dictionary
+    ...    definition=${B_WALLET_SPEND_DEFINITION}
+    ...    wallet_charge_amount=0
+    ...    currency=${CURRENCY_IRR}
+
+    ${credit_spend_wallet_for_business_1}    Create Dictionary
+    ...    definition=${B_WALLET_CREDIT_SPEND_DEFINITION}
+    ...    wallet_charge_amount=0
+    ...    currency=${CURRENCY_CRR}
+
+    ${debit_settlement_wallet_for_business_1}    Create Dictionary
+    ...    definition=${B_WALLET_DEBIT_SETTLEMENT_DEFINITION}
+    ...    wallet_charge_amount=0
+    ...    currency=${CURRENCY_IRR}
+
+    ${credit_settlement_wallet_for_business_1}    Create Dictionary
+    ...    definition=${B_WALLET_CREDIT_SETTLEMENT_DEFINITION}
+    ...    wallet_charge_amount=0
+    ...    currency=${CURRENCY_CRR}
+
+    @{role_list}    Create List    merchant-business
+
+    @{wallet_setup_list_1}    Create List
+    ...    ${spend_wallet_for_business_1}
+    ...    ${credit_spend_wallet_for_business_1}
+    ...    ${debit_settlement_wallet_for_business_1}
+    ...    ${credit_settlement_wallet_for_business_1}
+
+    ${INIT_BUSINESS_OBJ_1}    Get Initialized Business With Charged Wallet Based On Configuration
+    ...    ${wallet_setup_list_1}
+
+    ${LMS_AUTOMATION_BUSINESS_ID}    Set Variable    ${INIT_BUSINESS_OBJ_1['business_id']}
+    Set Test Variable    ${LMS_AUTOMATION_BUSINESS_ID}
+
+Reproduce Amount
+    [Documentation]    Reproduces the businessId wallets. This is a ```Test Teardown```
+    [Arguments]    ${additional_user_lists}=${ALLOCATION_USER_LIST}    ${user_object}=${user_object}
+
+    Collect All Amount For Tear Down    additional_user_lists=${additional_user_lists}
+
+Credit Allocation
+    [Arguments]    ${types}    ${set_variables_as}=TEST    &{optional_arguments}
+
+    ${user_object}    Activate Account
+    ...    types=${types}
+    ...    &{optional_arguments}
+
+    ${cell_number}    Set Variable    ${user_object['user_cell_number']}
+    ${user_id}    Set Variable    ${user_object['user_id']}
+    ${credit_ids}    Set Variable    ${user_object['user_credit_ids']}
+    &{user_data}    Create Dictionary    user_id=${user_id}    type=${CUSTOMER_TYPE}
+    ${ALLOCATION_USER_LIST}    Create List    ${user_data}
+
+    IF    '${set_variables_as}'=='TEST'
+        Set Test Variable    ${cell_number}
+        Set Test Variable    ${user_id}
+        Set Test Variable    ${credit_ids}
+        Set Test Variable    ${user_object}
+        Set Test Variable    ${ALLOCATION_USER_LIST}
+    END
+    IF    '${set_variables_as}'=='SUITE'
+        Set Suite Variable    ${cell_number}
+        Set Suite Variable    ${user_id}
+        Set Suite Variable    ${credit_ids}
+        Set Suite Variable    ${user_object}
+        Set Suite Variable    ${ALLOCATION_USER_LIST}
+    END
+
+The Features API Is Called
+    ${features_response}    POST Ticket Features
+    ...    ${MICROSERVICE_SIDE}
+    ...    ${PAYMENT_CHANNEL}
+    ...    ${CREDIT_TICKET_TYPE_V1.UPG}
+    ...    ${AMOUNT}
+    ...    ${user_id}
+    ...    ${MANIFEST_PLATFORM_VERSION}
+    ...    1    # product_type
+    ...    123456    # BasketId
+    ...    default    # sellerId
+    ...    default    # supplier_id
+    ...    default    # product_code
+    ...    default    # brand
+    ...    1    # count
+    ...    default    # category_id
+    ...    ${LMS_AUTOMATION_BUSINESS_ID}    # merchant_business_id
+    ...    false    # cheque_eligible
+    ...    https://example.com    # callback_url
+
+    Set Test Variable    ${features_response}
+
+Expire Account
+    [Documentation]    Wrapper for the Expiration Service
+    [Arguments]    ${credit_id}=${credit_ids}[0]
+
+    Expiration Time Setter    credit_id=${credit_id}
+
+The User Has 1pay And 4pay Accounts
+    Set Test Variable    ${DEFAULT_ALLOCATION_AMOUNT_4PAY}    20000
+    Credit Allocation
+    ...    types=${{['${LMS_Account_Type_1PAY}','${LMS_Account_Type_XPAY}']}}
+    ...    amounts=${{['${DEFAULT_ALLOCATION_AMOUNT}','${DEFAULT_ALLOCATION_AMOUNT_4PAY}']}}
+
+The User Has 1pay Account
+    Credit Allocation    types=${{['${LMS_Account_Type_1PAY}']}}    amounts=${{['${DEFAULT_ALLOCATION_AMOUNT}']}}
+
+The User Has Credit Account
+    Credit Allocation    types=${{['${LMS_Account_Type_CREDIT}']}}    amounts=${{['${DEFAULT_ALLOCATION_AMOUNT}']}}
+
+The User Has 4pay Account
+    Set Test Variable    ${DEFAULT_ALLOCATION_AMOUNT_4PAY}    20000
+    Credit Allocation    types=${{['${LMS_Account_Type_XPAY}']}}    amounts=${{['${DEFAULT_ALLOCATION_AMOUNT_4PAY}']}}
+
+The User Has 4pay And Credit Accounts
+    Set Test Variable    ${DEFAULT_ALLOCATION_AMOUNT_4PAY}    20000
+    Credit Allocation
+    ...    types=${{['${LMS_Account_Type_XPAY}','${LMS_Account_Type_CREDIT}']}}
+    ...    amounts=${{['${DEFAULT_ALLOCATION_AMOUNT_4PAY}','${DEFAULT_ALLOCATION_AMOUNT}']}}
+
+The User Has 1pay, 4pay, And Credit Accounts
+    Set Test Variable    ${DEFAULT_ALLOCATION_AMOUNT_4PAY}    20000
+    Credit Allocation
+    ...    types=${{['${LMS_Account_Type_1PAY}','${LMS_Account_Type_XPAY}','${LMS_Account_Type_CREDIT}']}}
+    ...    amounts=${{['${DEFAULT_ALLOCATION_AMOUNT}','${DEFAULT_ALLOCATION_AMOUNT_4PAY}','${DEFAULT_ALLOCATION_AMOUNT}']}}
+
+The User Has BNPL 1pay Balance Is Greater Than 4pay BNPL Balance
+    Set Test Variable    ${DEFAULT_ALLOCATION_AMOUNT_4PAY}    5000
+    Credit Allocation
+    ...    types=${{['${LMS_Account_Type_1PAY}','${LMS_Account_Type_XPAY}']}}
+    ...    amounts=${{['${DEFAULT_ALLOCATION_AMOUNT}','${DEFAULT_ALLOCATION_AMOUNT_4PAY}']}}
+
+The Gateway RepaymentOption Is Set To 1pay
+    @{REPAYMENT_OPTIONS}    Create List    ${LMS_REPAYMENT_OPTION.ONEPAY}
+    Set Test Variable    ${REPAYMENT_OPTIONS}
+    The Gateway Is Activated
+
+The Gateway RepaymentOption Is Set To Xpay
+    @{REPAYMENT_OPTIONS}    Create List    ${LMS_REPAYMENT_OPTION.XPAY}
+    Set Test Variable    ${REPAYMENT_OPTIONS}
+    The Gateway Is Activated
+
+The Gateway RepaymentOption Is Set To 1pay And Xpay
+    @{REPAYMENT_OPTIONS}    Create List    ${LMS_REPAYMENT_OPTION.ONEPAY}    ${LMS_REPAYMENT_OPTION.XPAY}
+    Set Test Variable    ${REPAYMENT_OPTIONS}
+    The Gateway Is Activated
+
+The Channel Is Set To API
+    Set Test Variable    ${PAYMENT_CHANNEL}    ${CHANNEL.API}
+
+The Channel Is Set To UPG
+    Set Test Variable    ${PAYMENT_CHANNEL}    ${CHANNEL.UPG}
+
+The Channel Is Set To Smart POS
+    Set Test Variable    ${PAYMENT_CHANNEL}    ${CHANNEL.SMART_POS}
+
+The Channel Is Set To QR
+    Set Test Variable    ${PAYMENT_CHANNEL}    ${CHANNEL.QR}
+
+The Channel Is Set To Escrow
+    Set Test Variable    ${PAYMENT_CHANNEL}    ${CHANNEL.ESCROW}
+
+The Channel Is Set To Barcode
+    Set Test Variable    ${PAYMENT_CHANNEL}    ${CHANNEL.BARCODE}
+
+The Channel Is Set To Linux POS
+    Set Test Variable    ${PAYMENT_CHANNEL}    ${CHANNEL.LINUX_POS}
+
+The Payment Gateway Is Set To BPG
+    Set Test Variable    ${PAYMENT_GATEWAY}    ${LMS_PAYMENT_GATEWAY.BPG}
+
+The Payment Gateway Is Set To CPG
+    Set Test Variable    ${PAYMENT_GATEWAY}    ${LMS_PAYMENT_GATEWAY.CPG}
+
+The Payment Gateway Is Set To ISPG
+    Set Test Variable    ${PAYMENT_GATEWAY}    ${LMS_PAYMENT_GATEWAY.ISPG}
+
+The Ticket Type Is Set To BNPL
+    Set Test Variable    ${TICKET_TYPE}    ${CREDIT_TICKET_TYPE_V1.BNPL}
+
+The Ticket Type Is Set To Credit
+    Set Test Variable    ${TICKET_TYPE}    ${CREDIT_TICKET_TYPE_V1.CREDIT}
+
+The Ticket Type Is Set To Installment Sale
+    Set Test Variable    ${TICKET_TYPE}    ${CREDIT_TICKET_TYPE_V1.INSTALLMENT_SALE}
+
+The Amount Is Set To Greater Than Credit Balance
+    ${find_dic}    Create Dictionary    creditId=${credit_ids}[0]
+    ${credit_account}    Mongo Db Find    credit-account-mng_db    accounts    ${find_dic}
+    ${credit_account_initial_balance}    Set Variable    ${credit_account}[body][0][initialBalance]
+    ${credit_account_initial_balance}    Value Handler    ${credit_account_initial_balance}
+    ${greater_amount}    Evaluate    ${credit_account_initial_balance} * 2
+    Set Test Variable    ${AMOUNT}    ${greater_amount}
+
+The Amount Is Set To Equal To Credit Balance
+    ${find_dic}    Create Dictionary    creditId=${credit_ids}[0]
+    ${credit_account}    Mongo Db Find    credit-account-mng_db    accounts    ${find_dic}
+    ${credit_account_initial_balance}    Set Variable    ${credit_account}[body][0][initialBalance]
+    ${credit_account_initial_balance}    Value Handler    ${credit_account_initial_balance}
+    Set Test Variable    ${AMOUNT}    ${credit_account_initial_balance}
+
+The Amount Is Set To Little Than Credit Balance
+    Set Test Variable    ${AMOUNT}    ${MIN_AMOUNT}
+
+The Gateway Is Activated
+    [Arguments]    ${repeat_count}=10
+    FOR    ${i}    IN RANGE    ${0}    ${repeat_count}    ${1}
+        ${disable_response}    POST Credit Gateway Disable
+        ...    ${MICROSERVICE_SIDE}
+        ...    ${LMS_AUTOMATION_BUSINESS_ID}
+        ...    ${PAYMENT_CHANNEL}
+        ...    ${PAYMENT_GATEWAY}
+    END
+    ${activate_response}    POST Credit Gateway Activate
+    ...    ${MICROSERVICE_SIDE}
+    ...    ${LMS_AUTOMATION_BUSINESS_ID}
+    ...    ${PAYMENT_CHANNEL}
+    ...    ${PAYMENT_GATEWAY}
+    ...    0
+    ...    ${DASHBOARD_USERNAME}
+    ...    ${REPAYMENT_OPTIONS}
+
+The Gateway Is Disabled
+    [Arguments]    ${repeat_count}=10
+    FOR    ${i}    IN RANGE    ${0}    ${repeat_count}    ${1}
+        ${disable_response}    POST Credit Gateway Disable
+        ...    ${MICROSERVICE_SIDE}
+        ...    ${LMS_AUTOMATION_BUSINESS_ID}
+        ...    ${PAYMENT_CHANNEL}
+        ...    ${PAYMENT_GATEWAY}
+    END
+
+    Should Be Equal As Integers
+    ...    ${disable_response['status_code']}
+    ...    200
+    ...    msg="Expected status code for Credit Gateway Disable API should be 200, and got" ${disable_response['status_code']}
+
+Blocker
+    [Arguments]    ${credit_id}=${credit_ids}[0]
+    ${response}    Post Admin Credit Accounts Block
+    ...    ${MICROSERVICE_SIDE}
+    ...    ${credit_id}
+    ...    ${LMS_BLOCK_REASON.ORGANIZATION_REQUEST}
+    ...    ${DASHBOARD_USERNAME}
+    Set Test Variable    ${BLOCK_RESPONSE}    ${response}
+    ${credit_account_status}    Check Credit Account Status    ${credit_id}
+    IF    '${credit_account_status}' != '3'    Fail
+
+Block credit account
+    [Arguments]    ${credit_id}=${credit_ids}[0]
+    ${max_retries}    Set Variable    60
+    ${retry_count}    Set Variable    0
+    ${status}    Set Variable    FAIL
+    WHILE    ${retry_count} < ${max_retries} and '${status}' == 'FAIL'
+        ${status}    Run Keyword And Return Status    Blocker    ${credit_id}
+        ${retry_count}    Evaluate    ${retry_count} + 1
+        IF    '${status}' == 'FAIL'    Sleep    1s
+    END
+
+Check Credit Account Status
+    [Arguments]    ${credit_id}
+    ${find_dic}    Create Dictionary    creditId=${credit_id}
+    ${credit_account}    Mongo Db Find    credit-account-mng_db    accounts    ${find_dic}
+    ${credit_account_status}    Set Variable    ${credit_account}[body][0][status]
+    RETURN    ${credit_account_status}
+
+Purchase Status Must Be CONFIRMED Or DELIVERED
+    [Arguments]    ${tracking_code}=${tracking_code}
+    ${filter_query}    Create Dictionary    trackingCode=${tracking_code}
+    ${result}    Mongo Db Find
+    ...    credit_mng_db
+    ...    purchases
+    ...    ${filter_query}
+    @{records}    Get From Dictionary    ${result}    body
+    ${result_object}    Set Variable    ${records}[0]
+    IF    '${result_object['status']}'!= 'CONFIRMED'
+        IF    '${result_object['status']}' != 'DELIVERED'
+            Fail
+            ...    msg=Expected the status for the purchase to be either CONFIRMED or DELIVERED but got ${result_object['status']}!
+        END
+    END
+
+Purchase Should Be Assigned To The Billing Cycle
+    [Arguments]    ${tracking_code}=${tracking_code}
+    ${filter_query}    Create Dictionary    trackingCode=${tracking_code}
+    ${result}    Mongo Db Find
+    ...    credit_mng_db
+    ...    purchases
+    ...    ${filter_query}
+    @{records}    Get From Dictionary    ${result}    body
+    ${result_object}    Set Variable    ${records}[0]
+    Should Be Equal As Strings    ${result_object['billingCycleAssigned']}    True
+
+Empty Balance
+    [Arguments]    ${credit_id}=${credit_ids}[0]
+    ${find_dic}    Create Dictionary    creditId=${credit_id}
+    ${credit_account}    Mongo Db Find    credit-account-mng_db    accounts    ${find_dic}
+    ${credit_account_initial_balance}    Set Variable    ${credit_account}[body][0][initialBalance]
+    ${credit_account_initial_balance}    Value Handler    ${credit_account_initial_balance}
+
+    ${amount}    Evaluate    ${credit_account_initial_balance}*2
+
+    ${empty_balance_tracking_code}    Perform A Complete Offline Purchase    ${user_id}    ${credit_id}    ${amount}
+
+    Purchase Status Must Be CONFIRMED Or DELIVERED    tracking_code=${empty_balance_tracking_code}
+    Wait Until Keyword Succeeds
+    ...    2 minute
+    ...    10 s
+    ...    Purchase Should Be Assigned To The Billing Cycle
+    ...    tracking_code=${empty_balance_tracking_code}
+
+    Set Test Variable    ${empty_balance_tracking_code}
+
+The Response Should Contain 1pay BNPL Account And Status Is Active
+    Should Be Equal As Numbers    ${features_response['body']['features'][0]['status']}    0
+    Should Be Equal As Numbers    ${features_response['body']['features'][0]['name']}    4
+    Should Be Equal As Numbers
+    ...    ${features_response['body']['features'][0]['balance']}
+    ...    ${DEFAULT_ALLOCATION_AMOUNT}
+
+The Response Should Contain Credit Account And Status Is Active
+    Should Be Equal As Numbers    ${features_response['body']['features'][0]['status']}    0
+    Should Be Equal As Numbers    ${features_response['body']['features'][0]['name']}    3
+    Should Be Equal As Numbers
+    ...    ${features_response['body']['features'][0]['balance']}
+    ...    ${DEFAULT_ALLOCATION_AMOUNT}
+
+The Response Should Contain Credit Account And Status Is Inactive
+    Should Be Equal As Numbers    ${features_response['body']['features'][0]['status']}    1
+    Should Be Equal As Numbers    ${features_response['body']['features'][0]['name']}    3
+    Should Be Equal As Numbers
+    ...    ${features_response['body']['features'][0]['balance']}
+    ...    0
+
+The Response Should Contain Blocked Or Expired Credit Account
+    Should Be Equal As Numbers    ${features_response['body']['features'][0]['status']}    0
+    Should Be Equal As Numbers    ${features_response['body']['features'][0]['name']}    3
+    Should Be Equal As Numbers
+    ...    ${features_response['body']['features'][0]['balance']}
+    ...    0
+
+The Response Should Contain 1pay BNPL Account And Status Is Inactive
+    Should Be Equal As Numbers    ${features_response['body']['features'][0]['status']}    1
+    Should Be Equal As Numbers    ${features_response['body']['features'][0]['name']}    4
+
+The Response Should Contain 1pay BNPL Account (Zero Credit Balance) And Status Is Active
+    Should Be Equal As Numbers    ${features_response['body']['features'][0]['status']}    0
+    Should Be Equal As Numbers    ${features_response['body']['features'][0]['balance']}    0
+    Should Be Equal As Numbers    ${features_response['body']['features'][0]['name']}    4
+
+The Response Should Contain Xpay BNPL Account (Zero Credit Balance) And Status Is Active
+    Should Be Equal As Numbers    ${features_response['body']['features'][0]['status']}    0
+    Should Be Equal As Numbers    ${features_response['body']['features'][0]['balance']}    0
+    Should Be Equal As Numbers    ${features_response['body']['features'][0]['name']}    4
+
+The Response Should Contain Xpay BNPL Account And Status Is Active
+    Should Be Equal As Numbers    ${features_response['body']['features'][0]['status']}    0
+    Should Be Equal As Numbers
+    ...    ${features_response['body']['features'][0]['balance']}
+    ...    ${DEFAULT_ALLOCATION_AMOUNT_4PAY}
+    Should Be Equal As Numbers    ${features_response['body']['features'][0]['name']}    4
+
+The Response Should Contain Xpay BNPL Account And Status Is Inactive
+    Should Be Equal As Numbers    ${features_response['body']['features'][0]['status']}    1
+    Should Be Equal As Numbers    ${features_response['body']['features'][0]['name']}    4
+
+The Response Should Contain All Accounts
+    Should Be Equal As Numbers    ${features_response['body']['features'][0]['status']}    0
+    Should Be Equal As Numbers    ${features_response['body']['features'][0]['name']}    4
+    Should Be Equal As Numbers    ${features_response['body']['features'][1]['status']}    0
+    Should Not Be Equal As Numbers    ${features_response['body']['features'][1]['balance']}    0
+    Should Be Equal As Numbers    ${features_response['body']['features'][1]['name']}    3
+
+The Response Should Contain No Accounts
+    Should Be Equal As Numbers    ${features_response['body']['features'][0]['name']}    4
+    Should Be Equal As Numbers    ${features_response['body']['features'][0]['status']}    0
+    Should Be Equal As Numbers    ${features_response['body']['features'][0]['balance']}    5000000
+
+The Response Should Contain Blocked Account
+    Should Be Equal As Numbers    ${features_response['body']['features'][0]['name']}    4
+    Should Be Equal As Numbers    ${features_response['body']['features'][0]['status']}    1
+
+The Response Should Contain Status Is 422 Unprocessable Entity
+    Should Be Equal As Strings    ${features_response['status_code']}    422
+
+The Response Should Contain Empty List Of Features
+    Length Should Be    item=${features_response['body']['features']}    length=0
+    Should Be Equal As Strings    ${features_response['status_code']}    200
+
+Call Schedule Close API
+    [Documentation]    Checks if the response status code is 200
+    [Arguments]    ${credit_id}=${credit_ids}[0]
+    ${schedule_close_response}    Post Credit Accounts Schedule Close
+    ...    ${MICROSERVICE_SIDE}
+    ...    ${credit_ids}[0]
+    ...    ${LMS_BLOCK_REASON.ORGANIZATION_REQUEST}
+    ...    ${DASHBOARD_USERNAME}
+    Set Test Variable    ${schedule_close_response}

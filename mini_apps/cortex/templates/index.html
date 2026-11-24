@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="neon" data-theme-cookie="qaCortexTheme">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cortex</title>
+    <link rel="icon" href="{{ url_for('static', filename='images/dp-logo.jpg') }}" type="image/jpeg">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Creepster&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Root for seasonal / occasional effects (snow, leaves, jumpscare, etc.) -->
+    <div id="occasion-effects-root"></div>
+
+    <!-- Theme selector (same style/behavior as hub/OTP) -->
+    <div class="theme-selector">
+        <label for="themeSelect">Theme:</label>
+        <select id="themeSelect" name="themeSelect">
+            <option value="neon">Neon Night</option>
+            <option value="occasional">Occasional</option>
+            <option value="legacy">Legacy (Default)</option>
+            <option value="dark">Dark</option>
+            <option value="ocean">Ocean</option>
+            <option value="forest">Forest</option>
+            <option value="sunset">Sunset</option>
+            <option value="terminal">Terminal</option>
+            <option value="pastel">Pastel</option>
+            <option value="grayscale">Grayscale</option>
+            <option value="midnight">Midnight</option>
+            <option value="cyberpunk">Cyberpunk</option>
+            <option value="aurora">Aurora</option>
+            <option value="desert">Desert</option>
+            <option value="candy">Candy</option>
+            <option value="ice">Ice</option>
+            <option value="lava">Lava</option>
+            <option value="blueprint">Blueprint</option>
+            <option value="solarized">Solarized</option>
+            <option value="lavender">Lavender</option>
+        </select>
+    </div>
+
+    <div class="panel">
+        <!-- Clickable Logo (Acts as Home Button) -->
+        <img src="{{ url_for('static', filename='images/dp-logo.jpg') }}"
+             alt="Logo"
+             class="logo"
+             onclick="goHome()"
+             title="Home">
+
+        <p class="title">
+            <span class="title-drip">Cortex</span>
+        </p>
+
+        <!-- Main Buttons -->
+        <div id="main-buttons" class="buttons">
+            <button onclick="showCloseForm()" title="Close">Close</button>
+            <button onclick="showAllocateForm()" title="Allocate">Allocate</button>
+        </div>
+
+        <!-- Close Form (Hidden Initially) -->
+        <div id="close-form" class="close-form">
+            <p class="close-label" id="input-label">
+                Close an account associated with the input <b>cellNumber</b>.
+            </p>
+            <div class="input-container">
+                <input
+                    type="text"
+                    id="close-input"
+                    placeholder="09911772110"
+                    title="cellNumbers"
+                    required
+                >
+                <select id="close-type" onchange="updatePlaceholder()" title="Close Type">
+                    <option value="cellNumber">Cell Number</option>
+                    <option value="creditId">Credit ID</option>
+                    <option value="cleanData">Clean Data</option>
+                </select>
+            </div>
+            <button onclick="submitClose()">Submit</button>
+        </div>
+
+        <!-- Allocate Form (Initially Hidden) -->
+        <div id="allocate-form" class="form-container">
+            <p class="close-label">Enter Details</p>
+
+            <div class="input-group">
+                <input
+                    type="text"
+                    id="cellNumber"
+                    placeholder="09911772110"
+                    title="cellNumber"
+                    required
+                >
+                <input
+                    type="text"
+                    id="nationalCode"
+                    placeholder="3242015444"
+                    title="nationalCode"
+                    required
+                >
+                <button
+                    class="generate-btn"
+                    onclick="generateRandomNumbers()"
+                    title="Randomly Generate"
+                >
+                    Generate
+                </button>
+            </div>
+
+            <hr>
+
+            <div id="allocation-list">
+                <div class="allocation-form">
+                    <select class="allocation-type" title="Allocation Type">
+                        <option value="1PAY">1PAY</option>
+                        <option value="3PAY">3PAY (4PAY With No Down Payment)</option>
+                        <option value="XPAY">4PAY</option>
+                        <option value="XPAY" disabled>XPAY 🔒 — Premium Only</option>
+                        <option value="CREDIT">CCREDIT</option>
+                        <option value="INSTALLMENT_SALE">INSTALLMENT_SALE</option>
+                    </select>
+                    <select class="fund-providers" title="Fund Provider">
+                        <option value="DP">Platform</option>
+                        <option value="TB">Tejarat</option>
+                        <option value="SD">Saderat</option>
+                        <option value="MLT">Mellat</option>
+                        <option value="GR">Gardeshgari</option>
+                        <option value="CO">Company</option>
+                    </select>
+                    <select class="fee-types" title="Fee Type">
+                        <option value="ZERO_FEE">No Fee</option>
+                        <option value="ZERO_FEE_AND_MANUAL_SETTLE">No Fee with Manual Settlement</option>
+                        <option value="ZERO_FEE_AND_MANUAL_OVERDUE">No Fee with Manual Overdue</option>
+                        <option value="FEE_ON_PURCHASE">Fee On Purchase</option>
+                        <option value="FEE_ON_INSTALLMENT">Fee On Installment</option>
+                        <option value="FEE_ON_INSTALLMENT_AND_MANUAL_SETTLE">
+                            Fee On Installment with Manual Settlement
+                        </option>
+                        <option value="FEE_ON_INSTALLMENT_AND_MANUAL_OVERDUE">
+                            Fee On Installment with Manual Overdue
+                        </option>
+                        <option value="FEE_ON_ALLOCATION">Fee On Allocation</option>
+                    </select>
+                    <input type="number" class="amount" value="30000" required>
+                </div>
+            </div>
+
+            <div class="allocation-controls">
+                <button onclick="addAllocationForm()" title="Add">
+                    <i class="fas fa-plus"></i>
+                </button>
+                <button onclick="removeAllocationForm()" title="Remove">
+                    <i class="fas fa-minus"></i>
+                </button>
+            </div>
+
+            <button class="submit-btn" onclick="submitAllocation()">Submit</button>
+        </div>
+
+        <p class="footnote">
+            Forged for all who seek, with thanks to those who came before.<br>
+            Mend what is broken… and perhaps the right keys will reveal a hidden door.
+        </p>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

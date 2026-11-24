@@ -1,0 +1,14 @@
+{
+    "messageCode": "12200",
+    "message": "service runs successfully.",
+    "installmentCount": 5,
+    "contractNumber": "14029419664",
+    "paidInstallmentCount": 0,
+    "notPaidInstallmentCount": 2,
+    "earlierInstallmentDate": 14030911,
+    "installmentAmount": 600000000,
+    "openDebtAmount": 600000000,
+    "debtAmount": 600000000,
+    "discountedDebtAmount": 101803,
+    "contractDesc": "Tashilat morabehe"
+}

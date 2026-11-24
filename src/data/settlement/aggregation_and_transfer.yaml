@@ -1,0 +1,66 @@
+SETTLEMENT_ITEM_QUEUE_NAME: settlement.item
+
+FEE_PROPERTIES:
+  fixedFeePercent: 10
+
+THRESHOLD_PROPERTY:
+  amount: 0
+  count: 0
+
+
+# gateway
+CPG_GATEWAY_ID: 4
+ISPG_GATEWAY_ID: 7
+ICP_GATEWAY_ID: 8
+BPG_GATEWAY_ID: 10
+
+GUILD_CONTRACT: "digital"
+
+# credit gateway
+
+BPG_CREDIT_GATEWAY: 1
+
+# channel
+CHANNEL_UPG_CONTRACT: 1
+
+# zone 
+DASHBOARD_ZONE: dashboard
+
+# user id create contract 
+
+USER_ID_CREATE_CONTRACT: efadff5e-53bb-4b2b-b9f1-5bfbeead04b8
+
+# contract owner group
+MERCHANT_PANEL_OWNER_GROUP: merchant-panel
+
+
+METHOD_CONTRACT_1: 7
+METHOD_CONTRACT_2: 2
+METHOD_CONTRACT_3: 3
+METHOD_CONTRACT_4: 7
+
+TAX_PERCENT: 10
+
+
+SETTLEMENT_ITEM_PROVIDER_ID: platform
+
+
+
+# settlement item rabbit mq
+EXCHANGE_NAME: amq.default
+ROUTING_KEY: settlement.item
+PAYLOAD_ENCODING: string
+
+TRANSACTIONS_HEADERS:
+  __TypeId__: com.platform.settlement.spec.event.SettlementEvent
+  content_type: application/json
+
+SETTLEMENT_DB_NAME: settlement_db
+
+SETTLEMENT_SETTLEMENT_ITEMS_COLLECTION: settlement_items
+SETTLEMENT_AGGREGATIONS_COLLECTION: settlement_aggregations
+SETTLEMENT_TRANSACTIONS_COLLECTION: transactions
+SETTLEMENT_BUSINESS_CONFIGS_COLLECTION: business_configs
+
+
+IBAN: IR460180000000004662578482

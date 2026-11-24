@@ -1,0 +1,15 @@
+################# Tejarat CREDIT APIS ###################
+TEJARAT_PAYMENTS_POST_API_ROUTE: /v3/facilities/external_contract_number/payments
+TEJARAT_PAYMENTS_GET_API_ROUTE: /v3/facilities/external_contract_number/payments
+TEJARAT_INSTALLMENTS_GET_API_ROUTE: /v3/facilities/external_contract_number/installments
+
+
+################# MELLAT CREDIT APIS ####################
+MELLAT_INSTALLMENTS_GET_API_ROUTE: /api/fs-contract-management/hub/installment/installments/national_code/external_contract_number
+
+################# SADERAT CREDIT APIS ####################
+
+SADERAT_PAY_POST_API_ROUTE:  /LoanPayment/Loan/Pay
+SADERAT_INQUIRY_GET_API_ROUTE:  /LoanPayment/Loan/Inquiry
+SADERAT_INFO_GET_API_ROUTE:  /LoanPayment/Loan/Info
+

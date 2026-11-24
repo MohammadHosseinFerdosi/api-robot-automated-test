@@ -1,0 +1,279 @@
+# Constant of registration inquiry 
+REQUESTER_APP_NAME: AutomationTestData
+MIN_WEIGHT_AUTO_WEIGHTING: 0.05
+
+# provider enums
+PROVIDERS:
+  basic:
+    type: 0
+    enums:
+      ENOVIN: 1
+      JIBIT_BASIC: 4
+      IT_SAAZ: 3
+  full:
+    type: 10
+    enums:
+      HAFEZSAMAN: 2
+      JIBIT_FULL: 5
+      MCI_FULL: 6
+
+# full or basic enum
+INQUIRY_TYPE:
+  basic: 0
+  full: 10
+
+# database
+MONGO_DATA:
+  db_name: kyc_db
+  collection_name: registration_inquiry_journals
+
+# user data
+WRONG_NATIONAL_CODE: 2282666q947
+
+PERSON_FOR_KYC_BAD_RESPONSE:
+  national_code: "4723770976"
+  birth_date: "1988-01-26"
+  persian_birth_date: "1366/11/06"
+  birth_date_timestamp: 570141000000
+
+VALID_PERSON:
+  national_code: "2282666917"
+  birth_date: "1998-12-06"
+  persian_birth_date: "1377/09/15"
+  birth_date_timestamp: 912889800000
+
+DEAD_PERSON:
+  national_code: "1751683931"
+  birth_date: "1977-03-11"
+  persian_birth_date: "1355/12/20"
+  birth_date_timestamp: 226873800000
+
+INVALID_PERSON:
+  national_code: "0020024746"
+  birth_date: "1997-05-21"
+
+VALID_PERSON_DATA_RESPONSE:
+  firstName: محمدمهدی
+  lastName: ثابت حاجیونی
+  fatherName: محمدامیر
+  nationalCode: 2282666917
+  birthDate: "1377/09/15"
+  shenasnameSeri: د24
+  shenasnameSerial: 651290
+  shenasnameNo: 0
+  birthCertificateInfo:
+    birthCertificateSerial: 651290
+    birthCertificateNumber: 0
+    birthCertificateSeries: د24
+  deathStatus: 0
+  gender: 1
+
+VALID_PERSON_FULL_DATA_RESPONSE:
+  firstName: محمدمهدی
+  lastName: ثابت حاجیونی
+  fatherName: محمدامیر
+  nationalCode: 2282666917
+  birthDate: "1377/09/15"
+  birthPlace: شيراز
+  shenasnameSeri: د24
+  shenasnameSerial: 651290
+  shenasnameNo: 0
+  birthCertificateInfo:
+    birthCertificateSerial: 651290
+    birthCertificateNumber: 0
+    birthCertificateSeries: د24
+  deathStatus: 0
+  gender: 1
+
+PERSON_FOR_KYC_BAD_RESPONSE_FULL_DATA_RESPONSE:
+  firstName: پریا
+  lastName: تقوائی
+  fatherName: پوری
+  nationalCode: 4723770976
+  birthDate: "1366/11/06"
+  birthPlace: ""
+  shenasnameSeri: ا14
+  shenasnameSerial: 307217
+  shenasnameNo: 1697
+  birthCertificateInfo:
+    birthCertificateSerial: 307217
+    birthCertificateNumber: 1697
+    birthCertificateSeries: ا14
+  deathStatus: 0
+  gender: 0
+
+DEAD_PERSON_FULL_DATA_RESPONSE:
+  firstName: مجید
+  lastName: سگوری
+  fatherName: حمید
+  nationalCode: 1751683931
+  birthDate: "1355/12/20"
+  birthPlace: اهواز
+  shenasnameSeri: ا35
+  shenasnameSerial: 589867
+  shenasnameNo: 5766
+  birthCertificateInfo:
+    birthCertificateSerial: 589867
+    birthCertificateNumber: 5766
+    birthCertificateSeries: ا35
+  deathStatus: 1
+  gender: 1
+
+DEAD_PERSON_DATA_RESPONSE:
+  firstName: مجید
+  lastName: سگوری
+  fatherName: حمید
+  nationalCode: 1751683931
+  birthDate: "1355/12/20"
+  shenasnameSeri: ا35
+  shenasnameSerial: 589867
+  shenasnameNo: 5766
+  birthCertificateInfo:
+    birthCertificateSerial: 589867
+    birthCertificateNumber: 5766
+    birthCertificateSeries: ا35
+  deathStatus: 1
+  gender: 1
+
+
+# response
+REGISTRATION_SUCCESS_WITH_USER_DATA_RESPONSE:
+  result:
+    title: SUCCESS
+    status: 0
+    message: عملیات با موفقیت انجام شد
+    level: INFO
+  firstName: محمدمهدی
+  lastName: ثابت حاجیونی
+  fatherName: محمدامیر
+  nationalCode: "2282666917"
+  birthDate: "1377/09/15"
+  shenasnameSeri: د24
+  shenasnameSerial: "651290"
+  shenasnameNo: "0"
+  birthCertificateInfo:
+    birthCertificateSerial: "651290"
+    birthCertificateNumber: "0"
+    birthCertificateSeries: د24
+  deathStatus: 0
+  gender: 1
+
+REGISTRATION_SUCCESS_WITH_DEAD_USER_DATA_RESPONSE:
+  result:
+    title: SUCCESS
+    status: 0
+    message: عملیات با موفقیت انجام شد
+    level: INFO
+  firstName: مجید
+  lastName: سگوری
+  fatherName: حمید
+  nationalCode: "1751683931"
+  birthDate: "1355/12/20"
+  shenasnameSeri: ا35
+  shenasnameSerial: "589867"
+  shenasnameNo: "5766"
+  birthCertificateInfo:
+    birthCertificateSerial: "589867"
+    birthCertificateNumber: "5766"
+    birthCertificateSeries: ا35
+  deathStatus: 1
+  gender: 1
+
+REGISTRATION_SUCCESS_WITH_DEAD_USER_FULL_DATA_RESPONSE:
+  result:
+    title: SUCCESS
+    status: 0
+    message: عملیات با موفقیت انجام شد
+    level: INFO
+  firstName: مجید
+  lastName: سگوری
+  fatherName: حمید
+  nationalCode: "1751683931"
+  birthDate: "1355/12/20"
+  birthPlace: "اهواز"
+  shenasnameSeri: ا35
+  shenasnameSerial: "589867"
+  shenasnameNo: "5766"
+  birthCertificateInfo:
+    birthCertificateSerial: "589867"
+    birthCertificateNumber: "5766"
+    birthCertificateSeries: ا35
+  deathStatus: 1
+  gender: 1
+
+REGISTRATION_SUCCESS_WITH_USER_FULL_DATA_RESPONSE:
+  result:
+    title: SUCCESS
+    status: 0
+    message: عملیات با موفقیت انجام شد
+    level: INFO
+  firstName: محمدمهدی
+  lastName: ثابت حاجیونی
+  fatherName: محمدامیر
+  nationalCode: "2282666917"
+  birthDate: "1377/09/15"
+  birthPlace: شيراز
+  shenasnameSeri: د24
+  shenasnameSerial: "651290"
+  shenasnameNo: "0"
+  birthCertificateInfo:
+    birthCertificateSerial: "651290"
+    birthCertificateNumber: "0"
+    birthCertificateSeries: د24
+  deathStatus: 0
+  gender: 1
+
+KYC_IDENTITY_NOT_FOUND:
+  result:
+    title: KYC_IDENTITY_NOT_FOUND
+    status: 10608
+    message: اطلاعات مورد نظر یافت نشد.
+    level: WARN
+
+KYC_BAD_RESPONSE:
+  result:
+    title: KYC_BAD_RESPONSE
+    status: 10604
+    message: ساختار پاسخ سرویس دهنده نادرست است
+    level: WARN
+
+KYC_SETTING_VALIDATION_ERROR:
+  result:
+    title: KYC_SETTING_VALIDATION_ERROR
+    status: 160636
+    message: اعتبارسنجی تنظیمات سرویس مورد نظر با خطا مواجه شد.
+    level: WARN
+
+INVALID_PARAMETER_FOR_SETTING_PROVIDER:
+  result:
+    title: INVALID_PARAMETER
+    status: 1054
+    message: اطلاعات ورودی اشتباه است.
+
+INVALID_PARAMETER:
+  result:
+    title: INVALID_PARAMETER
+    status: 1054
+    message: کد ملی اشتباه وارد شده است.
+
+REGISTRATION_SUCCESS_WITHOUT_USER_FULL_DATA_RESPONSE:
+  result:
+    title: SUCCESS
+    status: 0
+    message: عملیات با موفقیت انجام شد
+    level: INFO
+  firstName: پریا
+  lastName: تقوائی
+  fatherName: پوری
+  nationalCode: "4723770976"
+  birthDate: "1366/11/06"
+  birthPlace: ""
+  shenasnameSeri: ا14
+  shenasnameSerial: "307217"
+  shenasnameNo: "1697"
+  birthCertificateInfo:
+    birthCertificateSerial: "307217"
+    birthCertificateNumber: "1697"
+    birthCertificateSeries: ا14
+  deathStatus: 0
+  gender: 0

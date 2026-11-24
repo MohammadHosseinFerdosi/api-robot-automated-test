@@ -1,0 +1,15 @@
+BASE_URL: "https://example.com/backoffice/treasury-management/api"
+accountNumber: "565656565656"
+accountTypeId: 2
+bankId: 2
+branchId: 21
+projectId: 83
+minimumBalance: 0
+maximumBalance: 0
+rahkaranDetailedAccountCode: "1056"
+accountCodeId:  2
+iban: "565256525352545852156235"
+description: "تست"
+TCM_DB_NAME: "treasurymanagement"
+ID_BANK_TEJARAT: 1
+BANK_ACCOUNT_NUMBER_TEJARAT_794: "252759794"

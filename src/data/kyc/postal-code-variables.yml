@@ -1,0 +1,100 @@
+# Constant of postal code
+REQUESTER_APP_NAME: testData
+USER_ID: e05f9945-24cb-4fa1-b70c-ebce54882d87
+
+IT_SAAZ: 0
+JIBIT: 1
+SITAAD: 2
+
+POSTAL_CODE_MONGO_DATA:
+  db_name: kyc_db
+  collection_name: address_detail_journals
+
+# test postal code
+POSTAL_CODE: 1433793114
+INVALID_POSTAL_CODE: 1ops
+WRONG_POSTAL_CODE: 1433793122
+
+
+# Error messages
+INVALID_PARAMETER:
+  result:
+    title: INVALID_PARAMETER
+    status: 1054
+    message: کد پستی اشتباه است.
+    level: WARN
+
+NOT_FOUND:
+  status: 404
+  error: Not Found
+  path: /platform/api/addresses/postal-code/
+
+SUCCESS_RESPONSE:
+  result:
+    title: SUCCESS
+    status: 0
+    message: عملیات با موفقیت انجام شد
+    level: INFO
+ADDRESS_SUCCESS_RESPONSE_FOR_JIBIT:
+  address:
+    floor: '2'
+    houseNumber: 21
+    houseNo: '21'
+    localityName: تهران
+    province: تهران
+    street: خیابان 15/1
+    street2: خیابان ابن سینا
+    subLocality: یوسف آباد
+    townShip: تهران
+    district: مرکزی
+ADDRESS_SUCCESS_RESPONSE_FOR_SITAAD:
+  address:
+    buildingName: ""
+    description: شمال غربی
+    floor: '2'
+    houseNumber: 21
+    houseNo: "21"
+    localityCode: 1000051563
+    localityName: تهران
+    province: تهران
+    sideFloor: "3"
+    street: خیابان 15/1
+    street2: خیابان ابن سینا
+    subLocality: یوسف آباد
+    townShip: تهران
+    village: ""
+    district: مرکزی
+
+KYC_CLIENT_ERROR:
+  result:
+    title: KYC_CLIENT_ERROR
+    status: 10602
+    message: خطای سرویس دهنده پیش آمده است
+    level: WARN
+
+KYC_IDENTITY_NOT_FOUND:
+  result:
+    title: KYC_IDENTITY_NOT_FOUND
+    status: 10608
+    message: اطلاعات مورد نظر یافت نشد.
+    level: WARN
+
+INVALID_PARAMETER:
+  result:
+    title: INVALID_PARAMETER
+    status: 1054
+    message: کد پستی اشتباه است.
+    level: WARN
+
+KYC_SETTING_VALIDATION_ERROR:
+  result:
+    title: KYC_SETTING_VALIDATION_ERROR
+    status: 160636
+    message: اعتبارسنجی تنظیمات سرویس مورد نظر با خطا مواجه شد.
+    level: WARN
+
+INVALID_PARAMETER_FOR_PROVIDER_SETIINGS:
+  result:
+    title: INVALID_PARAMETER
+    status: 1054
+    message: اطلاعات ورودی اشتباه است.

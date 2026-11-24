@@ -1,0 +1,125 @@
+def registryURL = "dk.example.com"
+def registryMirror = "https://example.com"
+def project = "${JOB_NAME}"
+def namespace = "qa"
+def chart_name = "platform/app-chart"
+def timeout = "2m"
+def deployerTag = Jenkins.instance.getItem("build-deployer").lastSuccessfulBuild.number
+def baseimageTag = Jenkins.instance.getItem("build-baseimage-java17").lastSuccessfulBuild.number
+def DOCKER_REPO = 'infra-dk.example.com'
+
+pipeline {
+  agent {
+    kubernetes {
+      yaml """
+kind: Pod
+spec:
+  serviceAccountName: deployer-sa
+  imagePullSecrets:
+    - name: regsecret
+
+  containers:
+  - name: dind
+    image: ${registryURL}/baseimage-java17:${baseimageTag}
+    imagePullPolicy: IfNotPresent
+    command:
+      - dockerd-entrypoint.sh
+      - "--registry-mirror=$registryMirror"
+
+    securityContext:
+      privileged: true
+    resources:
+      requests:
+        ephemeral-storage: "4Gi"
+    volumeMounts:
+      - name: reg-ci-secret
+        mountPath: /root/.docker/config.json
+        subPath: config.json
+
+  - name: deployer
+    image: ${registryURL}/deployer:${deployerTag}
+    imagePullPolicy: IfNotPresent
+    tty: true
+    command:
+      - /bin/cat
+
+  volumes:
+    - name: reg-ci-secret
+      secret:
+        secretName: CHANGE_ME
+        defaultMode: 256
+        items:
+          - key: .dockerconfigjson
+            path: config.json
+
+"""
+    }
+  }
+
+    stages {
+      stage('Build') {
+        steps {
+          git(
+            url: "https://example.com/test/api-robot-automated-test.git",
+            credentialsId: 'jenkins-user',
+            branch: "master"
+          )
+            container('dind') {
+              sh """
+                docker build -t ${DOCKER_REPO}/${project}:${BUILD_NUMBER}-${GIT_COMMIT} .
+              """
+          }
+        }
+      }
+      stage('Push') {
+        steps {
+            container('dind') {
+              sh """
+                docker push ${DOCKER_REPO}/${project}:${BUILD_NUMBER}-${GIT_COMMIT}
+              """
+          }
+        }
+      }
+      stage('Deploy') {
+        steps {
+            container('deployer') {
+              sh """
+                set +e
+                helm repo update
+                helm upgrade --install -n ${namespace} -f helm.yaml \
+                --set image.repository=${DOCKER_REPO}/${project} \
+                --set image.tag="${BUILD_NUMBER}-${GIT_COMMIT}" \
+                ${project} ${chart_name} --wait --atomic --timeout ${timeout} --description ${GIT_COMMIT}
+				  while true
+                  do
+                    sleep 10
+                    POD_NAME=`kubectl  get po -n ${namespace} -l app.kubernetes.io/instance=${JOB_NAME} | tail -1 | cut -d' ' -f1`
+                    POD_STATUS=`kubectl  get po -n ${namespace} -l app.kubernetes.io/instance=${JOB_NAME} | tail -1 | cut -d' ' -f9`
+                    if [ \$POD_STATUS = 'Running' ]
+                    then
+                      sleep 5
+                      kubectl -n ${namespace} exec  \$POD_NAME -- sh /app/qa-script-api.sh
+                      break
+                    fi
+                  done
+                  rm -r ./log/*
+                  kubectl -n ${namespace} cp \$POD_NAME:/app/log/ ./log
+                  ls ./log
+
+              """
+          }
+        }
+      }
+    }
+    post {
+    		always {
+    			emailext body: "${env.BUILD_URL} has result ${currentBuild.result}" ,
+    			subject: "Status of pipeline: ${currentBuild.fullDisplayName}",
+    			to: 'mahmoud.bayat@demo-platform.com, ali.navab@demo-platform.com, ma.amiri@demo-platform.com, M.Pakseresht@demo-platform.com, hanieh.esmaeili@demo-platform.com, F.Bahramnejad@demo-platform.com, m.nami@demo-platform.com',
+    			recipientProviders: [buildUser(), developers(), requestor()],
+    			attachmentsPattern: '**/*.html',
+    			attachLog: true,
+    			compressLog:true
+    		}
+    	}
+  }
